@@ -44,34 +44,36 @@ int sqlTest()
 
         /* Create a connection */
         driver = get_driver_instance();
-        con = driver->connect("tcp://127.0.0.1:3306", "root", "root");
+        con = driver->connect("tcp://127.0.0.1:3306", "simplemond", "pass");
         /* Connect to the MySQL test database */
-        con->setSchema("test");
+        con->setSchema("SimpleMon_test");
 
         stmt = con->createStatement();
-        stmt->execute("DROP TABLE IF EXISTS test");
-        stmt->execute("CREATE TABLE test(id INT)");
+        //stmt->execute("DROP TABLE IF EXISTS test");
+        stmt->execute("CREATE TABLE IF NOT EXISTS test(id INT, ram INT, disk INT, date DATE, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (id, time))");
         delete stmt;
 
         /* '?' is the supported placeholder syntax */
-        pstmt = con->prepareStatement("INSERT INTO test(id) VALUES (?)");
+        pstmt = con->prepareStatement("INSERT INTO test(id, ram, disk) VALUES (?, ? ,?)");
         for (int i = 1; i <= 10; i++)
         {
             pstmt->setInt(1, i);
+            pstmt->setInt(2, rand()%100);
+            pstmt->setInt(3, rand()%1024);
             pstmt->executeUpdate();
         }
         delete pstmt;
 
         /* Select in ascending order */
-        pstmt = con->prepareStatement("SELECT id FROM test ORDER BY id ASC");
+        pstmt = con->prepareStatement("SELECT id, ram, disk, time FROM test ORDER BY id ASC");
         res = pstmt->executeQuery();
 
         /* Fetch in reverse = descending order! */
         res->afterLast();
         while (res->previous())
-            cout << "\t... MySQL counts: " << res->getInt("id") << endl;
+            cout << "\t... PC stats: " <<  res->getString("time") << res->getInt("id") << res->getInt("ram") << res->getInt("disk") << endl;
+        
         delete res;
-
         delete pstmt;
         delete con;
     }

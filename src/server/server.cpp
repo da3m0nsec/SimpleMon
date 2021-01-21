@@ -66,7 +66,10 @@ int main(int argc, char const *argv[])
     }
     std::cout << "4" << std::endl;
 
-    int rest = sqlTest();
+    while (1) {
+        int rest = sqlTest();
+        sleep(10);
+    }
 
     while (1)
     {
