@@ -38,7 +38,7 @@ StatusMessage fillMsg()
     msg.uid = stoi(exec("id -u osboxes"));
     msg.free_mem = stoi(exec("cat /proc/meminfo | grep MemFree | awk '{ print $2 }'"))/1000;
     msg.free_disk = stoi(exec("df -h | grep /dev/sda1 | awk '{ print $4 } ' | sed 's/.$//'")); // TO-DO:difference between G and M;
-    msg.used_cpu = 100-stod(exec("top -b -i -n 1 | grep Cpu | awk '{ print $ 8 }'"));
+    msg.used_cpu = 100-stod(exec("top -b -i -n 1 | grep '%Cpu(s):' | cut -c9- | awk '{ print $ 7 }'"));
     std::cout << "Msg filled" << std::endl;
     return msg;
 }
