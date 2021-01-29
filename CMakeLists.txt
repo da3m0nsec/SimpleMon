@@ -8,20 +8,27 @@ project (SimpleMon)
 set (CMAKE_CXX_STANDARD 20)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSTATIC_CONCPP")
 # Create a sources variable with a link to all cpp files to compile
-set(SOURCES
-    src/client/client.cpp
+set(SERVER_SOURCES
     src/server/server.cpp
     src/server/sql_handler.cpp
 )
+set(CLIENT_SOURCES
+    src/client/client.cpp
+)
 
 # Add an executable with the above sources
-add_executable(server ${SOURCES})
+add_executable(server ${SERVER_SOURCES})
+add_executable(client ${CLIENT_SOURCES})
+
+
 execute_process (
     COMMAND bash -c "mysql_config --libs"
     OUTPUT_VARIABLE mysqlLibs
 )
+
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+
 target_link_libraries(server 
     pthread
     mysqlcppconn
@@ -34,5 +41,9 @@ target_include_directories(server
     PRIVATE 
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/include/server
+)
+target_include_directories(client
+    PRIVATE 
+        ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/include/client
 )

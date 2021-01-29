@@ -1,7 +1,6 @@
 #include <SimpleMon/server/server.h>
 
 #include <SimpleMon/server/sql_handler.h>
-#include <SimpleMon/client/client.h>
 
 #include <unistd.h>
 #include <stdio.h>
@@ -43,39 +42,33 @@ int main(int argc, char const *argv[])
 
     std::cout << "Creating send thread" << std::endl;
 
-    std::thread send_thread (client);
      
-        // Forcefully attaching socket to the port 8080
-        if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
+    // Forcefully attaching socket to the port 8080
+    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
+    {
+        perror("bind failed");
+        exit(EXIT_FAILURE);
+    }
+    while (1)
+    { 
+        if (listen(server_fd, 3) < 0)
         {
-            perror("bind failed");
+            perror("listen");
             exit(EXIT_FAILURE);
         }
-        while (1)
-        { 
-            if (listen(server_fd, 3) < 0)
-            {
-                perror("listen");
-                exit(EXIT_FAILURE);
-            }
-            if ((new_socket = accept(server_fd, (struct sockaddr *)&address,
-                                    (socklen_t *)&addrlen)) < 0)
-            {
-                perror("accept");
-                exit(EXIT_FAILURE);
-            }
-        /*
-            while (1) {
-            int rest = sqlTest();
-            sleep(20);
+        if ((new_socket = accept(server_fd, (struct sockaddr *)&address,
+                                (socklen_t *)&addrlen)) < 0)
+        {
+            perror("accept");
+            exit(EXIT_FAILURE);
         }
-    */
-            std::cout << "Receiving" << std::endl;
-            valread = read(new_socket, buffer, 5120);
-            //printf("%s\n",buffer );
-            memcpy(&msg, buffer, sizeof(msg));
-            ingestToSql(msgToSql(msg));
-        }
+        
+        std::cout << "Receiving" << std::endl;
+        valread = read(new_socket, buffer, 5120);
+        //printf("%s\n",buffer );
+        memcpy(&msg, buffer, sizeof(msg));
+        ingestToSql(msgToSql(msg));
+    }
     return 0;
 }
 
