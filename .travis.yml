@@ -1,7 +1,7 @@
 language: cpp
 os: linux
 
-matrix:
+jobs:
     include:
         os: linux
         addons:
@@ -9,7 +9,7 @@ matrix:
                 packages:
                     - g++
                     - cmake
-                    - libmysqlcppconn7v5
+                    - libmysqlcppconn-dev
 
 script:
     - mkdir -p build

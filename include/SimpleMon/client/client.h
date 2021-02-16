@@ -2,6 +2,8 @@
 #pragma once
 
 #include <SimpleMon/msg.h>
+#include <SimpleMon/config.h>
+
 
 #include <stdio.h>
 #include <sys/socket.h>

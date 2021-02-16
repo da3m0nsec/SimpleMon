@@ -12,3 +12,5 @@ ExecStart=/
 "
 
 #copy to /usr/sbin
+
+#prepare sql

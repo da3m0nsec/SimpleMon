@@ -5,9 +5,7 @@
 
 struct StatusMessage {
 public:
-    //int system_id = 66;
-    //char nick[256] = "nick";
-    //char ls[256] = "ls";
+    std::array <char, 32> hostname;
     int uid = 0;
     int free_mem = 0;
     int free_disk = 0;

@@ -5,8 +5,8 @@ Description=SimpleMon Client
 After=network.target
 
 [Service]
-Restart=alwayss
-RestartSec=2
+Restart=always
+RestartSec=3
 User=simplemond
 ExecStart=/
 "

@@ -1,5 +1,5 @@
 #include <SimpleMon/server/server.h>
-
+#include <SimpleMon/config.h>
 #include <SimpleMon/server/sql_handler.h>
 
 #include <unistd.h>
@@ -13,6 +13,8 @@
 
 int main(int argc, char const *argv[])
 {
+    Config conf;
+    conf = parse_config ("../config/server.conf");
     
     int server_fd, new_socket, valread;
     struct sockaddr_in address;
@@ -38,7 +40,7 @@ int main(int argc, char const *argv[])
     }
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(PORT);
+    address.sin_port = htons(conf.port);
 
     std::cout << "Creating send thread" << std::endl;
 
@@ -75,6 +77,7 @@ int main(int argc, char const *argv[])
 StatusVector msgToSql(StatusMessage& msg){
     StatusVector ret;
 
+    ret.emplace_back(msg.hostname.data(), 0);
     ret.emplace_back("uid", msg.uid);
     ret.emplace_back("free_mem", msg.free_mem);
     ret.emplace_back("free_disk", msg.free_disk);

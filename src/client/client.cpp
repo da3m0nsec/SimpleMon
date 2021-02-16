@@ -21,10 +21,12 @@ StatusMessage fillMsg()
     std::cout << "Filling msg" << std::endl;
     StatusMessage msg;
     msg.uid = stoi(exec("id | awk '{ print $1 }' | cut -c 5-8"));
+    auto hostname = exec ("hostname");
+    std::copy_n(hostname.begin(), std::min(hostname.size(), sizeof(char)*32), msg.hostname.begin());
     msg.free_mem = stoi(exec("cat /proc/meminfo | grep MemFree | awk '{ print $2 }'"))/1000;
-    //msg.free_disk = stoi(exec("df -h | grep /dev/sda1 | awk '{ print $4 } ' | sed 's/.$//'")); // TO-DO:difference between G and M;
-    msg.free_disk = stoi(exec("df -h | grep 'D:' | awk '{ print $4 } ' | rev | cut -c 2- | rev"));
-    msg.used_cpu = 100-stod(exec("top -b -i -n 1 | grep '%Cpu(s):' | cut -c 36-40"));
+    msg.free_disk = stoi(exec("df -h | grep /dev/sda1 | awk '{ print $4 } ' | sed 's/.$//'")); // TO-DO:difference between G and M;
+    //msg.free_disk = stoi(exec("df -h | grep 'D:' | awk '{ print $4 } ' | rev | cut -c 2- | rev"));
+    msg.used_cpu = 100-stod(exec("top -b -i -n 1 | grep '%Cpu(s):' | awk -F',' '{print $4}' | grep -o  '[0-9]*\\.[0-9]'"));
     std::cout << "Msg filled" << std::endl;
     return msg;
 }
@@ -33,6 +35,8 @@ int main()
 {
     while (1)
     {
+        Config conf;
+        conf = parse_config ("../config/client.conf");
 
         int sock = 0, valread;
         struct sockaddr_in serv_addr;
@@ -46,10 +50,10 @@ int main()
         }
 
         serv_addr.sin_family = AF_INET;
-        serv_addr.sin_port = htons(PORT);
+        serv_addr.sin_port = htons(conf.port);
 
         // Convert IPv4 and IPv6 addresses from text to binary form
-        if (inet_pton(AF_INET, "192.168.1.47", &serv_addr.sin_addr) <= 0)
+        if (inet_pton(AF_INET, conf.ip_address.c_str(), &serv_addr.sin_addr) <= 0)
         {
             printf("\nInvalid address/ Address not supported \n");
             return 2;
