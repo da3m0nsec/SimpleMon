@@ -1,12 +1,15 @@
 language: cpp
-install:
+os: linux
+
+matrix:
     os: linux
-    sudo: false
-    compiler: gcc
-    apt:
-        packages:
-            - g++
-            - cmake
+    addons:    
+        sudo: false
+        compiler: gcc
+        apt:
+            packages:
+                - g++
+                - cmake
 
 
 script:
