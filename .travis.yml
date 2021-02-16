@@ -2,14 +2,14 @@ language: cpp
 os: linux
 
 matrix:
-    os: linux
-    addons:    
-        sudo: false
-        compiler: gcc
-        apt:
-            packages:
-                - g++
-                - cmake
+    include: 
+        - os: linux
+        addons:    
+            compiler: gcc
+            apt:
+                packages:
+                    - g++
+                    - cmake
 
 
 script:
