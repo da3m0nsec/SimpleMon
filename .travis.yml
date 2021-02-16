@@ -2,15 +2,14 @@ language: cpp
 os: linux
 
 matrix:
-    include: 
-        - os: linux
-        addons:    
+    include:
+        os: linux
+        addons:
             apt:
                 packages:
                     - g++
                     - cmake
                     - libmysqlcppconn7v5
-
 
 script:
     - mkdir -p build
