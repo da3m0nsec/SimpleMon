@@ -1,0 +1,16 @@
+language: cpp
+install:
+    os: linux
+    sudo: false
+    compiler: gcc
+    apt:
+        packages;
+            - g++
+            - cmake
+
+
+script:
+    - mdkir -p build
+    - cd build
+    - cmake
+    - make
