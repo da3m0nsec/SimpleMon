@@ -5,7 +5,6 @@ matrix:
     include: 
         - os: linux
         addons:    
-            compiler: gcc
             apt:
                 packages:
                     - g++
