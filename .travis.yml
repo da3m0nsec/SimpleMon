@@ -4,7 +4,7 @@ install:
     sudo: false
     compiler: gcc
     apt:
-        packages;
+        packages:
             - g++
             - cmake
 
