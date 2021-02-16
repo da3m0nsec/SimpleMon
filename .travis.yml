@@ -10,10 +10,11 @@ matrix:
                 packages:
                     - g++
                     - cmake
+                    - libmysqlcppconn7v5
 
 
 script:
-    - mdkir -p build
+    - mkdir -p build
     - cd build
-    - cmake
+    - cmake ..
     - make
