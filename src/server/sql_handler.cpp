@@ -24,7 +24,6 @@ const string url = EXAMPLE_HOST;
         sql::Driver *driver;
         sql::Connection *con;
         sql::Statement *stmt;
-        //sql::ResultSet *res;
         sql::PreparedStatement *pstmt;
         std::cout << "Ingesting to SQL" << std::endl;
 
@@ -37,12 +36,13 @@ const string url = EXAMPLE_HOST;
 
         stmt = con->createStatement();
         //stmt->execute("DROP TABLE IF EXISTS test");
-        stmt->execute("CREATE TABLE IF NOT EXISTS test(uid INT, free_mem INT, free_disk INT, used_cpu INT, date DATE, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (uid, time))");
+        stmt->execute("CREATE TABLE IF NOT EXISTS test(hostname CHAR(32), uid INT, free_mem INT, free_disk INT, used_cpu INT, date DATE, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (uid, time))");
         delete stmt;
 
         /* '?' is the supported placeholder syntax */
-        pstmt = con->prepareStatement("INSERT INTO test(uid, free_mem, free_disk, used_cpu) VALUES (?, ? ,?, ?)");
-        for (int i = 0; i < msg.size(); i++)
+        pstmt = con->prepareStatement("INSERT INTO test(hostname, uid, free_mem, free_disk, used_cpu) VALUES (?, ?, ?, ?, ?)");
+        pstmt -> setString(1, msg.at(0).first);
+        for (int i = 1; i < msg.size(); i++)
         {
             //std::cout << i << "\n" << std::endl;
             pstmt->setInt(i+1, msg.at(i).second);    

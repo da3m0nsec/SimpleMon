@@ -1,19 +1,4 @@
-// Client side C/C++ program to demonstrate Socket programming
 #include <SimpleMon/client/client.h>
-#include <SimpleMon/msg.h>
-
-#include <stdio.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <string.h>
-
-#include <cstdio>
-#include <iostream>
-#include <memory>
-#include <stdexcept>
-#include <string>
-#include <array>
 
 std::string exec(const char *cmd)
 {
@@ -35,18 +20,23 @@ StatusMessage fillMsg()
 {
     std::cout << "Filling msg" << std::endl;
     StatusMessage msg;
-    msg.uid = stoi(exec("id -u osboxes"));
+    msg.uid = stoi(exec("id | awk '{ print $1 }' | cut -c 5-8"));
+    auto hostname = exec ("hostname");
+    std::copy_n(hostname.begin(), std::min(hostname.size(), sizeof(char)*32), msg.hostname.begin());
     msg.free_mem = stoi(exec("cat /proc/meminfo | grep MemFree | awk '{ print $2 }'"))/1000;
     msg.free_disk = stoi(exec("df -h | grep /dev/sda1 | awk '{ print $4 } ' | sed 's/.$//'")); // TO-DO:difference between G and M;
-    msg.used_cpu = 100-stod(exec("top -b -i -n 1 | grep '%Cpu(s):' | cut -c9- | awk '{ print $ 7 }'"));
+    //msg.free_disk = stoi(exec("df -h | grep 'D:' | awk '{ print $4 } ' | rev | cut -c 2- | rev"));
+    msg.used_cpu = 100-stod(exec("top -b -i -n 1 | grep '%Cpu(s):' | awk -F',' '{print $4}' | grep -o  '[0-9]*\\.[0-9]'"));
     std::cout << "Msg filled" << std::endl;
     return msg;
 }
 
-void client()
+int main()
 {
     while (1)
     {
+        Config conf;
+        conf = parse_config ("../config/client.conf");
 
         int sock = 0, valread;
         struct sockaddr_in serv_addr;
@@ -56,34 +46,29 @@ void client()
         if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
         {
             printf("\n Socket creation error \n");
-            return;
+            return 1;
         }
 
         serv_addr.sin_family = AF_INET;
-        serv_addr.sin_port = htons(PORT);
+        serv_addr.sin_port = htons(conf.port);
 
         // Convert IPv4 and IPv6 addresses from text to binary form
-        if (inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr) <= 0)
+        if (inet_pton(AF_INET, conf.ip_address.c_str(), &serv_addr.sin_addr) <= 0)
         {
             printf("\nInvalid address/ Address not supported \n");
-            return;
+            return 2;
         }
 
         if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
         {
             printf("\nConnection Failed \n");
-            return;
+            return 3;
         }
 
         
         std::cout << "Sending msg" << std::endl;
         send(sock, &msg, sizeof(msg), 0);
         sleep(20);
-
-        /*
-        valread = read( sock , buffer, 1024); 
-        printf("%s\n",buffer ); 
-        */
     }
-    return;
+    return 0;
 }

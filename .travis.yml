@@ -1,0 +1,18 @@
+language: cpp
+os: linux
+
+jobs:
+    include:
+        os: linux
+        addons:
+            apt:
+                packages:
+                    - g++
+                    - cmake
+                    - libmysqlcppconn-dev
+
+script:
+    - mkdir -p build
+    - cd build
+    - cmake ..
+    - make

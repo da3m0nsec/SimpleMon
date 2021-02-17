@@ -1,6 +1,8 @@
 #pragma once
 
 #include <SimpleMon/msg.h>
+#include <SimpleMon/server/server.h>
+
 
 #include <vector>
 #include <string>
