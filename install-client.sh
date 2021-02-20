@@ -3,7 +3,9 @@
 # User creation
 sudo useradd -r -s /bin/nologin simplemond
 
-serviceText="[Unit]
+serviceText=""
+cat > $serviceText <<- EOF
+[Unit]
 Description=SimpleMon Client
 After=network.target
 
@@ -12,7 +14,7 @@ Restart=always
 RestartSec=3
 User=simplemond
 ExecStart=/usr/sbin/simplemond-client
-"
+EOF
 
 # Compile
 mkdir build
