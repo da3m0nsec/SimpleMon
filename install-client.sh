@@ -1,16 +1,9 @@
 #!/bin/bash
 
-if (( EUID != 0 )); then
-   echo "You must be root to do this." 1>&2
-   exit 1
-fi
-
-
-
 # User creation
-useradd -r -s /bin/nologin simplemond
+su useradd -r -s /bin/nologin simplemond
 
-simplemon-client="[Unit]
+serviceText="[Unit]
 Description=SimpleMon Client
 After=network.target
 
@@ -18,8 +11,24 @@ After=network.target
 Restart=always
 RestartSec=3
 User=simplemond
-ExecStart=/
+ExecStart=/usr/sbin/simplemond-client
 "
 
-# Copy to /usr/sbin
+# Compile
+mkdir build
+cd build
+cmake ..
+make client
 
+# Copy program to /usr/sbin
+su cp client /usr/sbin/simplemond-client
+
+# Copy config to /etc/simplemon-client
+su mkdir /etc/simplemon-client
+su cp ../config/client.conf /etc/simplemon-client
+
+# Copy service
+su echo $serviceText > /etc/systemd/system/simplemond-client
+
+systemctl start simplemond-client
+systemctl enable simplemond-client

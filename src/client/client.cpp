@@ -36,7 +36,7 @@ int main()
     while (1)
     {
         Config conf;
-        conf = parse_config ("../config/client.conf");
+        conf = parse_config ("/etc/simplemon-client/client.conf");
 
         int sock = 0, valread;
         struct sockaddr_in serv_addr;
