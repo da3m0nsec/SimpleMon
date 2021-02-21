@@ -4,7 +4,7 @@
 sudo useradd -r -s /bin/nologin simplemond
 
 serviceText=""
-cat > $serviceText <<- EOF
+cat > "$serviceText" <<- EOF
 [Unit]
 Description=SimpleMon Client
 After=network.target
