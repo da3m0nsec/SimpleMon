@@ -23,20 +23,21 @@ make client
 
 # Check build exit code
 
-if [ $? -eq 0 ]
+if [ $? -ne 0 ]
 then
    echo "Build failed, exiting" >&2
+   exit
 fi
 
 # Copy program to /usr/sbin
-sudo cp client /usr/sbin/simplemond-client
+sudo cp client /usr/sbin/simplemond-client   
 
 # Copy config to /etc/simplemon-client
 sudo mkdir /etc/simplemon-client
 sudo cp ../config/client.conf /etc/simplemon-client
 
 # Copy service
-sudo echo $serviceText > /etc/systemd/system/simplemond-client
+sudo echo -e $serviceText > /etc/systemd/system/simplemond-client
 
 systemctl start simplemond-client
 systemctl enable simplemond-client
