@@ -61,7 +61,9 @@ int main()
 
         if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
         {
-            printf("\nConnection Failed \n");
+            int err = errno; 
+            //printf("\nConnection Failed \n");
+            fprintf(stderr, "Connection failed: %s\n", strerror(err));
             return 3;
         }
 
