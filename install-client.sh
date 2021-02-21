@@ -21,6 +21,13 @@ cd build
 cmake ..
 make client
 
+# Check build exit code
+
+if [ $? -eq 0]
+then
+   echo "Build failed, exiting" >&2
+fi
+
 # Copy program to /usr/sbin
 sudo cp client /usr/sbin/simplemond-client
 
