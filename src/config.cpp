@@ -15,7 +15,7 @@ Config parse_config (std::string filename) {
             auto value = line.substr(delimiterPos + 1);
             
             // Parse options
-            if (name == "ip") {
+            if (name == "ip_address") {
                 conf.ip_address = value;
             }
 
