@@ -1,11 +1,12 @@
 # Set the minimum version of CMake that can be used
 # To find the cmake version run
 # $ cmake --version
-#cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.5)
 
 # Set the project name
 project (SimpleMon)
 set (CMAKE_CXX_STANDARD 20)
+QMAKE_CXXFLAGS += -std=c++2a
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSTATIC_CONCPP")
 # Create a sources variable with a link to all cpp files to compile
 set(SERVER_SOURCES
