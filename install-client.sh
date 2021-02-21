@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Dependencies 
-sudo apt install cmake
+sudo apt install cmake=3.5
 
 # User creation
 sudo useradd -r -s /bin/nologin simplemond
