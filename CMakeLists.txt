@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.5)
 project (SimpleMon)
 #set (CMAKE_CXX_STANDARD 20)
 #set(CMAKE_CXX_STANDARD_REQUIRED ON)
-add_compile_options(-std=c++2a)
+add_compile_options(-std=c++17)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSTATIC_CONCPP")
 # Create a sources variable with a link to all cpp files to compile
 set(SERVER_SOURCES
