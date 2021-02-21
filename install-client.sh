@@ -1,20 +1,19 @@
 #!/bin/bash
 
+# Dependencies 
+sudo apt install cmake
+
 # User creation
 sudo useradd -r -s /bin/nologin simplemond
 
-serviceText=""
-cat > "$serviceText" <<- EOF
-[Unit]
-Description=SimpleMon Client
-After=network.target
-
-[Service]
-Restart=always
-RestartSec=3
-User=simplemond
-ExecStart=/usr/sbin/simplemond-client
-EOF
+serviceText="[Unit]\n"
+serviceText+="Description=SimpleMon Client\n"
+serviceText+="After=network.target\n"
+serviceText+="[Service]\n"
+serviceText+="Restart=always\n"
+serviceText+="RestartSec=3\n"
+serviceText+="User=simplemond\n"
+serviceText+="ExecStart=/usr/sbin/simplemond-client\n"
 
 # Compile
 mkdir build
