@@ -64,6 +64,9 @@ int main()
             int err = errno; 
             //printf("\nConnection Failed \n");
             fprintf(stderr, "Connection failed: %s\n", strerror(err));
+            std::cerr << "IP: " << conf.ip_address << std::endl;
+            std::cerr << "Port: " << conf.port << std::endl;
+
             return 3;
         }
 
