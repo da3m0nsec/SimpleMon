@@ -23,7 +23,7 @@ make client
 
 # Check build exit code
 
-if [ $? -eq 0]
+if [ $? -eq 0 ]
 then
    echo "Build failed, exiting" >&2
 fi
