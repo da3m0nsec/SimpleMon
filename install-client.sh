@@ -37,7 +37,7 @@ sudo mkdir /etc/simplemon-client
 sudo cp ../config/client.conf /etc/simplemon-client
 
 # Copy service
-sudo echo -e $serviceText > /etc/systemd/system/simplemond-client.service
+echo -e $serviceText | sudo tee -a /etc/systemd/system/simplemond-client.service >/dev/null
 
 systemctl start simplemond-client
 systemctl enable simplemond-client
