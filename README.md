@@ -14,4 +14,17 @@
 
 SimpleMon allows you to monitor multiple systems in an easy way, while being customizable, hackable and secure.
 
+## Dependencies
+
+Compiling:
+```
+sudo apt install cmake g++ libgcc-7-dev libmysqlcppconn-dev libssl-dev
+```
+
+Using Client:
+```
+sudo apt install openssl
+```
+
+
 ## Warning: Currently under development
