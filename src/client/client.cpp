@@ -43,32 +43,7 @@ int main()
         StatusMessage msg = fillMsg();
 
         char buffer[1024] = {0};
-        if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-        {
-            printf("\n Socket creation error \n");
-            return 1;
-        }
-
-        serv_addr.sin_family = AF_INET;
-        serv_addr.sin_port = htons(conf.port);
-
-        // Convert IPv4 and IPv6 addresses from text to binary form
-        if (inet_pton(AF_INET, conf.ip_address.c_str(), &serv_addr.sin_addr) <= 0)
-        {
-            printf("\nInvalid address/ Address not supported \n");
-            return 2;
-        }
-
-        if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-        {
-            int err = errno; 
-            //printf("\nConnection Failed \n");
-            fprintf(stderr, "Connection failed: %s\n", strerror(err));
-            std::cerr << "IP: " << conf.ip_address << std::endl;
-            std::cerr << "Port: " << conf.port << std::endl;
-
-            return 3;
-        }
+        
 
         
         std::cout << "Sending msg" << std::endl;

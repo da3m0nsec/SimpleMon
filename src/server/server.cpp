@@ -1,15 +1,4 @@
 #include <SimpleMon/server/server.h>
-#include <SimpleMon/config.h>
-#include <SimpleMon/server/sql_handler.h>
-
-#include <unistd.h>
-#include <stdio.h>
-#include <sys/socket.h>
-#include <stdlib.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <iostream>
-#include <thread>
 
 int main(int argc, char const *argv[])
 {
@@ -17,12 +6,19 @@ int main(int argc, char const *argv[])
     conf = parse_config ("../config/server.conf");
     
     int server_fd, new_socket, valread;
+    SSL_CTX *ctx = create_context();
     struct sockaddr_in address;
-    int opt = 1;
+    
+    
     int addrlen = sizeof(address);
     char buffer[5120] = {};
     StatusMessage msg;
+    SSL *ssl;
+    
+    configure_context(ctx);
+    server_fd = create_socket(conf.port);
 
+/*
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
@@ -48,6 +44,7 @@ int main(int argc, char const *argv[])
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
+    */
     while (1)
     { 
         if (listen(server_fd, 3) < 0)
