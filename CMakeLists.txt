@@ -8,7 +8,7 @@ project (SimpleMon)
 #set (CMAKE_CXX_STANDARD 20)
 #set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options(-std=c++17)
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSTATIC_CONCPP")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSTATIC_CONCPP -lssl -lcrypto")
 # Create a sources variable with a link to all cpp files to compile
 set(SERVER_SOURCES
     src/server/server.cpp
@@ -41,8 +41,8 @@ target_link_libraries(server
     pthread
     mysqlcppconn
     mysqlcppconn-static
-    ssl
-    crypto
+    OpenSSL:SSL
+    OpenSSL:Crypto
 )
 
 # Set the directories that should be included in the build command for this target

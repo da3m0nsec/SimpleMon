@@ -10,7 +10,6 @@ jobs:
                     - g++
                     - cmake
                     - libmysqlcppconn-dev
-                    - botan
 
 script:
     - mkdir -p build
