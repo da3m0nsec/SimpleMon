@@ -14,10 +14,12 @@ set(SERVER_SOURCES
     src/server/server.cpp
     src/server/sql_handler.cpp
     src/config.cpp
+    src/ssl_handler.cpp
 )
 set(CLIENT_SOURCES
     src/client/client.cpp
     src/config.cpp
+    src/ssl_handler.cpp
 )
 
 # Add an executable with the above sources
@@ -33,10 +35,14 @@ execute_process (
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
+find_package(OpenSSL REQUIRED)
+
 target_link_libraries(server 
     pthread
     mysqlcppconn
     mysqlcppconn-static
+    ssl
+    crypto
 )
 
 # Set the directories that should be included in the build command for this target
