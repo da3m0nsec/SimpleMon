@@ -2,16 +2,21 @@
 
 #include <string>
 
-#include <openssl/evp.h>
-#include <openssl/rsa.h>
-#include <openssl/engine.h>
+#include <botan/base64.h>
+#include <botan/hex.h>
+#include <botan/rng.h>
 
-int envelope_seal(EVP_PKEY **pub_key, unsigned char *plaintext, int plaintext_len,
-	unsigned char **encrypted_key, int *encrypted_key_len, unsigned char *iv,
-	unsigned char *ciphertext);
+#include <botan/pk_keys.h>
+#include <botan/x509_key.h>
+#include <botan/pk_algs.h>
+#include <botan/pkcs8.h>
+#include <botan/pubkey.h>
+#include <botan/internal/workfactor.h>
+#include <botan/data_src.h>
+#include <botan/der_enc.h>
+#include <botan/ber_dec.h>
+#include <botan/oids.h>
+#include <botan/aead.h>
+#include <botan/pem.h>
 
-int envelope_open(EVP_PKEY *priv_key, unsigned char *ciphertext, int ciphertext_len,
-	unsigned char *encrypted_key, int encrypted_key_len, unsigned char *iv,
-	unsigned char *plaintext);
-
-void handleErrors();
+std::vector <uint8_t> encrypt ();
