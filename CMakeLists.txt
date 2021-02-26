@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.5)
 
 # Set the project name
 project (SimpleMon)
+include(FindBotan.cmake)
 #set (CMAKE_CXX_STANDARD 20)
 #set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_options(-std=c++17)
@@ -40,12 +41,15 @@ find_package(OpenSSL REQUIRED)
 find_package(OpenSSL REQUIRED)
 
 target_link_libraries(server 
-    pthread
     mysqlcppconn
     mysqlcppconn-static
-    OpenSSL:SSL
-    OpenSSL:Crypto
+    ${BOTAN2_LIBRARIES}
 )
+
+target_link_libraries(client 
+    ${BOTAN2_LIBRARIES}
+)
+
 
 # Set the directories that should be included in the build command for this target
 # when running g++ these will be included as -I/directory/path/
@@ -53,9 +57,12 @@ target_include_directories(server
     PRIVATE 
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/include/server
+        ${BOTAN2_INCLUDE_DIRS}
 )
 target_include_directories(client
     PRIVATE 
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/include/client
+        ${BOTAN2_INCLUDE_DIRS}
+
 )

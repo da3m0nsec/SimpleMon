@@ -44,8 +44,6 @@ int main()
 
         char buffer[1024] = {0};
         
-
-        
         std::cout << "Sending msg" << std::endl;
         send(sock, &msg, sizeof(msg), 0);
         sleep(20);

@@ -14,6 +14,8 @@ serviceText+="Restart=always\n"
 serviceText+="RestartSec=3\n"
 serviceText+="User=simplemond\n"
 serviceText+="ExecStart=/usr/sbin/simplemond-client\n"
+serviceText+="[Install]\n"
+serviceText+="WantedBy=multi-user.target\n"
 
 # Compile
 mkdir build

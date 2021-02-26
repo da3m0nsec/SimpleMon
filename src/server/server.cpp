@@ -6,26 +6,21 @@ int main(int argc, char const *argv[])
     conf = parse_config ("../config/server.conf");
     
     int server_fd, new_socket, valread;
-    SSL_CTX *ctx = create_context();
+    int opt = 1;
     struct sockaddr_in address;
     
     
     int addrlen = sizeof(address);
     char buffer[5120] = {};
     StatusMessage msg;
-    SSL *ssl;
-    
-    configure_context(ctx);
-    server_fd = create_socket(conf.port);
 
-/*
+
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
-
 
     // Forcefully attaching socket to the port 
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
@@ -44,7 +39,7 @@ int main(int argc, char const *argv[])
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-    */
+
     while (1)
     { 
         if (listen(server_fd, 3) < 0)
