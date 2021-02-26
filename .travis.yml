@@ -4,8 +4,10 @@ os: linux
 jobs:
     include:
         os: linux
+        dist: focal
         addons:
             apt:
+                update: true
                 packages:
                     - g++
                     - cmake
