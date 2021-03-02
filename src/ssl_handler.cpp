@@ -40,5 +40,8 @@ bool verify (const uint8_t* in, size_t length, std::string pathToKey) {
 }
 
 Botan::SecureVector<uint8_t> open_key (std::string path_to_key) {
-
 }
+
+
+
+
