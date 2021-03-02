@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <memory>
 
 #include <botan/base64.h>
 #include <botan/hex.h>
@@ -20,6 +21,15 @@
 #include <botan/aead.h>
 #include <botan/pem.h>
 #include <botan/ecdsa.h>
+
+#include <botan/tls_client.h>
+#include <botan/tls_callbacks.h>
+#include <botan/tls_session_manager.h>
+#include <botan/tls_policy.h>
+#include <botan/auto_rng.h>
+#include <botan/certstor.h>
+#include <botan/pk_keys.h>
+
 
 std::vector<uint8_t> encrypt ();
 
