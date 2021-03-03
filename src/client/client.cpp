@@ -36,16 +36,15 @@ int main()
     while (1)
     {
         Config conf;
-        conf = parse_config ("/etc/simplemon-client/client.conf");
+        conf = parse_config ("../config/client.conf");
 
-        int sock = 0, valread;
-        struct sockaddr_in serv_addr;
         StatusMessage msg = fillMsg();
 
         char buffer[1024] = {0};
         
         std::cout << "Sending msg" << std::endl;
-        send(sock, &msg, sizeof(msg), 0);
+        Socket_Client sock (conf.ip_address, conf.port);
+        sock.send((char*)&msg, sizeof(msg));
         sleep(20);
     }
     return 0;

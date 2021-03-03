@@ -3,7 +3,7 @@
 #include <SimpleMon/msg.h>
 #include <SimpleMon/config.h>
 #include <SimpleMon/server/sql_handler.h>
-#include <SimpleMon/ssl_socket.h>
+#include <SimpleMon/server/socket_server.h>
 
 #include <iostream>
 #include <thread>
@@ -13,8 +13,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <sys/socket.h>
-#include <netinet/in.h>
 
 
 #include <vector>

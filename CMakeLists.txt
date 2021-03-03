@@ -14,13 +14,13 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSTATIC_CONCPP -lssl -lcrypto")
 set(SERVER_SOURCES
     src/server/server.cpp
     src/server/sql_handler.cpp
+    src/server/socket_server.cpp
     src/config.cpp
-    src/ssl_handler.cpp
 )
 set(CLIENT_SOURCES
     src/client/client.cpp
+    src/client/socket_client.cpp
     src/config.cpp
-    src/ssl_handler.cpp
 )
 
 # Add an executable with the above sources

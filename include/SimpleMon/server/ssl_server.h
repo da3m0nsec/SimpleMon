@@ -1,10 +1,7 @@
-#include <botan/tls_policy.h>
-#include <botan/hex.h>
-#include <botan/internal/os_utils.h>
-#include <botan/mem_ops.h>
+#pragma once 
 
-#include <list>
-#include <fstream>
+class Server_Credentials : public Botan::Credentials_Manager;
 
-#include "tls_helpers.h"
-#include "socket_utils.h"
+class Callbacks : public Botan::TLS::Callbacks;
+
+

@@ -1,3 +1,13 @@
+#include <SimpleMon/ssl_server.h>
+
+#include <botan/tls_server.h>
+#include <botan/tls_policy.h>
+#include <botan/hex.h>
+#include <botan/internal/os_utils.h>
+#include <botan/mem_ops.h>
+
+#include <list>
+#include <fstream>
 
 /**
  * @brief Credentials storage for the tls server.
@@ -11,29 +21,29 @@
 class Server_Credentials : public Botan::Credentials_Manager
 {
    public:
-      Server_Credentials() : m_key(Botan::PKCS8::load_key("botan.randombit.net.key"))
-         {
-         }
+        Server_Credentials() : m_key(Botan::PKCS8::load_key("botan.randombit.net.key"))
+        {
+        }
 
       std::vector<Botan::Certificate_Store*> trusted_certificate_authorities(
          const std::string& type,
          const std::string& context) override
          {
-         // if client authentication is required, this function
-         // shall return a list of certificates of CAs we trust
-         // for tls client certificates, otherwise return an empty list
-         return std::vector<Certificate_Store*>();
+            // if client authentication is required, this function
+            // shall return a list of certificates of CAs we trust
+            // for tls client certificates, otherwise return an empty list
+            return std::vector<Certificate_Store*>();
          }
 
       std::vector<Botan::X509_Certificate> cert_chain(
-         const std::vector<std::string>& cert_key_types,
-         const std::string& type,
-         const std::string& context) override
-         {
-         // return the certificate chain being sent to the tls client
-         // e.g., the certificate file "botan.randombit.net.crt"
-         return { Botan::X509_Certificate("botan.randombit.net.crt") };
-         }
+        const std::vector<std::string>& cert_key_types,
+        const std::string& type,
+        const std::string& context) override
+        {
+            // return the certificate chain being sent to the tls client
+            // e.g., the certificate file "botan.randombit.net.crt"
+            return { Botan::X509_Certificate("botan.randombit.net.crt") };
+        }
 
       Botan::Private_Key* private_key_for(const Botan::X509_Certificate& cert,
          const std::string& type,
@@ -41,7 +51,7 @@ class Server_Credentials : public Botan::Credentials_Manager
          {
          // return the private key associated with the leaf certificate,
          // in this case the one associated with "botan.randombit.net.crt"
-         return &m_key;
+            return &m_key;
          }
 
       private:
@@ -77,11 +87,22 @@ class Callbacks : public Botan::TLS::Callbacks
          {
          // process full TLS record received by tls client, e.g.,
          // by passing it to the application
+            for(size_t i = 0; i != input_len; ++i)
+            {
+                const char c = static_cast<char>(input[i]);
+                m_line_buf += c;
+                if(c == '\n')
+                {
+                    m_pending_output.push_back(m_line_buf);
+                    m_line_buf.clear();
+                }
+            }
          }
 
       void tls_alert(Botan::TLS::Alert alert) override
          {
          // handle a tls alert received from the tls server
+         output() << "Alert: " << alert.type_string() << std::endl;
          }
 
       bool tls_session_established(const Botan::TLS::Session& session) override
@@ -93,8 +114,8 @@ class Callbacks : public Botan::TLS::Callbacks
          }
 };
 
-
-void botan_TLS_Server () {
+/*
+Botan::TLS::Server build_TLS_Server () { //CANT USE THIS
 	// prepare all the parameters
 	Callbacks callbacks;
 	Botan::AutoSeeded_RNG rng;
@@ -103,11 +124,12 @@ void botan_TLS_Server () {
 	Botan::TLS::Strict_Policy policy;
 
 	// accept tls connection from client
-	Botan::TLS::Server server(callbacks,
+	Botan::TLS::Server server(  callbacks,
 								session_mgr,
 								creds,
 								policy,
 								rng);
+    return server;
 
 	// read data received from the tls client, e.g., using BSD sockets or boost asio
 	// and pass it to server.received_data().
@@ -115,3 +137,4 @@ void botan_TLS_Server () {
 
 	// send data to the tls client using server.send_data()
 }
+*/
