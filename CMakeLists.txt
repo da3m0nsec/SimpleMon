@@ -15,11 +15,13 @@ set(SERVER_SOURCES
     src/server/server.cpp
     src/server/sql_handler.cpp
     src/server/socket_server.cpp
+    src/server/ssl_server.cpp
     src/config.cpp
 )
 set(CLIENT_SOURCES
     src/client/client.cpp
     src/client/socket_client.cpp
+    src/client/ssl_client.cpp
     src/config.cpp
 )
 

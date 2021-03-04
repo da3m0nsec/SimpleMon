@@ -34,15 +34,13 @@ Socket_Server::~Socket_Server(){
 void Socket_Server::read(char* buf, size_t length){
     if (listen(server_fd, 3) < 0)
     {
-        perror("listen");
-        exit(EXIT_FAILURE);
+        throw std::system_error(EAGAIN,  std::generic_category(),  strerror(errno));
     }
     int addrlen = sizeof(address);
     if ((sock = accept4(server_fd, (struct sockaddr *)&address,
                             (socklen_t *)&addrlen, SOCK_NONBLOCK)) < 0)
     {
-        perror("accept");
-        exit(EXIT_FAILURE);
+        throw std::system_error(EAGAIN,  std::generic_category(),  strerror(errno));
     }
         
     std::cout << "Receiving" << std::endl;

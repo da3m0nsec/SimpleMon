@@ -17,6 +17,7 @@ class Socket_Client{
 
 public:
     Socket_Client(std::string , int );
+    Socket_Client(const Socket_Client&) = delete;
     ~Socket_Client();
     void send(char* buf, size_t length);
 };

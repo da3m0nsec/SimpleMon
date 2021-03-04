@@ -16,6 +16,7 @@ class Socket_Server{
 
 public:
     Socket_Server(int port);
+    Socket_Server(const Socket_Server&) = delete;
     ~Socket_Server();
     void read(char* buf, size_t length);
 };

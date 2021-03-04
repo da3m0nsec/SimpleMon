@@ -37,14 +37,29 @@ int main()
     {
         Config conf;
         conf = parse_config ("../config/client.conf");
-
         StatusMessage msg = fillMsg();
-
         char buffer[1024] = {0};
-        
+        std::shared_ptr<Socket_Client> s = std::make_shared<Socket_Client>(conf.ip_address, conf.port);
+       
+        // Create TLS connection
+        Callbacks callbacks;
+        callbacks.sock = s; //TODO: move this to constructor
+        Botan::AutoSeeded_RNG rng;
+        Botan::TLS::Session_Manager_In_Memory session_mgr(rng);
+        Client_Credentials creds;
+        Botan::TLS::Strict_Policy policy;
+
+        // open the tls connection
+        Botan::TLS::Client client(  callbacks,
+                                    session_mgr,
+                                    creds,
+                                    policy,
+                                    rng,
+                                    Botan::TLS::Server_Information(),
+                                    Botan::TLS::Protocol_Version::TLS_V12);
+
         std::cout << "Sending msg" << std::endl;
-        Socket_Client sock (conf.ip_address, conf.port);
-        sock.send((char*)&msg, sizeof(msg));
+        client.send((uint8_t*)&msg, sizeof(msg));
         sleep(20);
     }
     return 0;
