@@ -14,7 +14,7 @@ Client_Credentials::Client_Credentials()
 
 std::vector<Botan::Certificate_Store*> Client_Credentials::trusted_certificate_authorities(
     const std::string& type,
-    const std::string& context) override
+    const std::string& context) 
     {
     // return a list of certificates of CAs we trust for tls server certificates
     // ownership of the pointers remains with Credentials_Manager
@@ -24,7 +24,7 @@ std::vector<Botan::Certificate_Store*> Client_Credentials::trusted_certificate_a
 std::vector<Botan::X509_Certificate> Client_Credentials::cert_chain(
     const std::vector<std::string>& cert_key_types,
     const std::string& type,
-    const std::string& context) override
+    const std::string& context) 
     {
     // when using tls client authentication (optional), return
     // a certificate chain being sent to the tls server,
@@ -34,7 +34,7 @@ std::vector<Botan::X509_Certificate> Client_Credentials::cert_chain(
 
 Botan::Private_Key* Client_Credentials::private_key_for(const Botan::X509_Certificate& cert,
     const std::string& type,
-    const std::string& context) override
+    const std::string& context) 
     {
     // when returning a chain in cert_chain(), return the private key
     // associated with the leaf certificate here
@@ -50,35 +50,36 @@ Botan::Private_Key* Client_Credentials::private_key_for(const Botan::X509_Certif
  * to implement are listed here. See src/lib/tls/tls_callbacks.h.
  */
 
-void Callbacks::tls_emit_data(const uint8_t buf[], size_t size) override
+void Callbacks::tls_emit_data(const uint8_t buf[], size_t size) 
 {
     // send data to tls server, e.g., using BSD sockets or boost asio
     if (sock == nullptr){
-        throw "No socket in Callbacks";
+        throw (std::logic_error("No socket"));
     }
     else {
-        sock->send(buf, size);
+        //throw "No socket in Callbacks";
+        sock->send((char*)buf, size);
     }
 }
 
-void Callbacks::tls_record_received(uint64_t seq_no, const uint8_t data[], size_t size) override
+void Callbacks::tls_record_received(uint64_t seq_no, const uint8_t data[], size_t size) 
     {
     // process full TLS record received by tls server, e.g.,
     // by passing it to the application
-    for(size_t i = 0; i != buf_size; ++i)
+    for(size_t i = 0; i != size; ++i)
     {
-        std::cout << buf[i];
+        std::cout << data[i];
     }
 
     }
 
-void Callbacks::tls_alert(Botan::TLS::Alert alert) override
+void Callbacks::tls_alert(Botan::TLS::Alert alert) 
     {
     // handle a tls alert received from the tls server
     std::cout << "Alert: " << alert.type_string() << "\n";
     }
 
-bool Callbacks::tls_session_established(const Botan::TLS::Session& session) override
+bool Callbacks::tls_session_established(const Botan::TLS::Session& session) 
     {
     // the session with the tls server was established
     // return false to prevent the session from being cached, true to
@@ -96,7 +97,7 @@ bool Callbacks::tls_session_established(const Botan::TLS::Session& session) over
         std::cout << "Session ticket " << Botan::hex_encode(session.session_ticket()) << "\n";
         }
 
-    if(flag_set("print-certs"))
+    if(0)
         {
         const std::vector<Botan::X509_Certificate>& certs = session.peer_certs();
 

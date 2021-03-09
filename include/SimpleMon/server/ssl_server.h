@@ -5,15 +5,17 @@
 #include <botan/tls_server.h>
 #include <botan/tls_policy.h>
 #include <botan/hex.h>
-#include <botan/internal/os_utils.h>
 #include <botan/mem_ops.h>
+#include <botan/pkcs8.h>
+#include <botan/auto_rng.h>
+
 
 #include <memory>
 
 class Server_Credentials : public Botan::Credentials_Manager{
 public:
-    Server_Credentials():
-        m_key(Botan::PKCS8::load_key("botan.randombit.net.key"))
+    Server_Credentials(Botan::AutoSeeded_RNG& rng):
+        m_key(Botan::PKCS8::load_key("../cert/ssl/priv.key", rng , "pass" ))
         {};
     std::vector<Botan::Certificate_Store*> trusted_certificate_authorities(
          const std::string& type,
@@ -31,7 +33,7 @@ public:
 
 class Callbacks : public Botan::TLS::Callbacks{
 public:
-    std::shared_ptr <Socket_Client> sock = nullptr;
+    std::shared_ptr <Socket_Server> sock = nullptr;
 
     void tls_emit_data(const uint8_t buf[], size_t size) override;
     void tls_record_received(uint64_t seq_no, const uint8_t data[], size_t size) override;

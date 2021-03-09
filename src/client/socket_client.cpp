@@ -26,6 +26,6 @@ Socket_Client::~Socket_Client(){
     close(sock);
 }
 
-void Socket_Client::send(char* buf, size_t length){
+void Socket_Client::send(const char* buf, size_t length){
     ::send(sock, buf, length, 0);
 }

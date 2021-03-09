@@ -38,9 +38,10 @@ int main()
         Config conf;
         conf = parse_config ("../config/client.conf");
         StatusMessage msg = fillMsg();
+        std::cout << "Original:" << msg.uid << " " << msg.used_cpu << " " << std::endl;
         char buffer[1024] = {0};
-        std::shared_ptr<Socket_Client> s = std::make_shared<Socket_Client>(conf.ip_address, conf.port);
-       
+        std::unique_ptr<Socket_Client> s = std::make_unique<Socket_Client>(conf.ip_address, conf.port);
+       /*
         // Create TLS connection
         Callbacks callbacks;
         callbacks.sock = s; //TODO: move this to constructor
@@ -58,9 +59,36 @@ int main()
                                     Botan::TLS::Server_Information(),
                                     Botan::TLS::Protocol_Version::TLS_V12);
 
+        sleep(5);
         std::cout << "Sending msg" << std::endl;
         client.send((uint8_t*)&msg, sizeof(msg));
-        sleep(20);
-    }
+        */
+        std::string plaintext("Your great-grandfather gave this watch to your granddad for good luck. Unfortunately, Dane's luck wasn't as good as his old man's.");
+        std::vector<uint8_t> pt(plaintext.data(),plaintext.data()+plaintext.length());
+        std::unique_ptr<Botan::RandomNumberGenerator> rng(new Botan::AutoSeeded_RNG);
+
+        //load keypair
+        std::unique_ptr<Botan::Private_Key> kp(Botan::PKCS8::load_key("../cert/ssl/nopass.key",*rng.get()));
+
+        //encrypt with pk
+        Botan::PK_Encryptor_EME enc(*kp,*rng.get(), "EME1(SHA-256)");
+        std::vector<uint8_t> ct = enc.encrypt(pt,*rng.get());
+
+        
+        //decrypt with sk
+        Botan::PK_Decryptor_EME dec(*kp,*rng.get(), "EME1(SHA-256)");
+        //std::cout << std::endl << "enc: " << Botan::hex_encode(ct) << std::endl << "dec: "<< Botan::hex_encode(dec.decrypt(ct));
+        std::cout << "Max size = " << enc.maximum_input_size() << std::endl; 
+        
+        //std::cout << std::endl << "enc: " << Botan::hex_encode(ct) << std::endl << "dec: "<< Botan::hex_encode(dec.decrypt(ct));
+        ;
+        
+        StatusMessage msg_d;
+        std::cout << "Msg size = " << enc.encrypt((const unsigned char*)&msg, sizeof(msg), *rng.get()).size() << std::endl;
+        memcpy(&msg_d, dec.decrypt(enc.encrypt((const unsigned char*)&msg, sizeof(msg), *rng.get())).data(), sizeof(msg));
+        std::cout << "Final:" << msg_d.uid << " " << msg_d.used_cpu << " " << std::endl;
+        
+        //sleep(20);
     return 0;
+    }
 }
