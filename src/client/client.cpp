@@ -72,19 +72,20 @@ int main()
 
         //encrypt with pk
         Botan::PK_Encryptor_EME enc(*kp,*rng.get(), "EME1(SHA-256)");
-        std::vector<uint8_t> ct = enc.encrypt(pt,*rng.get());
 
-        
         //decrypt with sk
         Botan::PK_Decryptor_EME dec(*kp,*rng.get(), "EME1(SHA-256)");
         //std::cout << std::endl << "enc: " << Botan::hex_encode(ct) << std::endl << "dec: "<< Botan::hex_encode(dec.decrypt(ct));
-        std::cout << "Max size = " << enc.maximum_input_size() << std::endl; 
+        std::cout << "Max size = " << enc.maximum_input_size() << std::endl;
         
         //std::cout << std::endl << "enc: " << Botan::hex_encode(ct) << std::endl << "dec: "<< Botan::hex_encode(dec.decrypt(ct));
-        ;
         
+        
+        std::vector<uint8_t> ct = enc.encrypt((const unsigned char*)&msg, sizeof(msg), *rng.get());
+        std::cout << "Msg size = " << ct.size() << std::endl;
+        s->send((const char*)ct.data(),ct.size());
+
         StatusMessage msg_d;
-        std::cout << "Msg size = " << enc.encrypt((const unsigned char*)&msg, sizeof(msg), *rng.get()).size() << std::endl;
         memcpy(&msg_d, dec.decrypt(enc.encrypt((const unsigned char*)&msg, sizeof(msg), *rng.get())).data(), sizeof(msg));
         std::cout << "Final:" << msg_d.uid << " " << msg_d.used_cpu << " " << std::endl;
         

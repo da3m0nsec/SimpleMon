@@ -37,8 +37,8 @@ void Socket_Server::read(char* buf, size_t length){
         throw std::system_error(EAGAIN,  std::generic_category(),  strerror(errno));
     }
     int addrlen = sizeof(address);
-    if ((sock = accept4(server_fd, (struct sockaddr *)&address,
-                            (socklen_t *)&addrlen, SOCK_NONBLOCK)) < 0)
+    if ((sock = accept(server_fd, (struct sockaddr *)&address,
+                            (socklen_t *)&addrlen)) < 0)
     {
         throw std::system_error(EAGAIN,  std::generic_category(),  strerror(errno));
     }

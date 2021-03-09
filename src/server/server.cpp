@@ -30,8 +30,10 @@ int main(int argc, char const *argv[])
     Botan::PK_Decryptor_EME dec(*kp,*rng.get(), "EME1(SHA-256)");
     
     while (1)
-    { 
+    {
         s->read((char *)buffer,512);
+        memcpy(&msg, dec.decrypt((const unsigned char*)&buffer, 384).data(), sizeof(msg));
+
         //server.received_data(buffer, sizeof(msg));
 
         //memcpy(&msg, dec.decrypt(enc.encrypt((const unsigned char*)&msg, sizeof(msg), *rng.get())).data(), sizeof(msg));
