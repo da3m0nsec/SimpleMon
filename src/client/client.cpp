@@ -21,12 +21,14 @@ StatusMessage fillMsg()
     std::cout << "Filling msg" << std::endl;
     StatusMessage msg;
     msg.uid = stoi(exec("id | awk '{ print $1 }' | cut -c 5-8"));
-    auto hostname = exec ("hostname");
-    std::copy_n(hostname.begin(), std::min(hostname.size(), sizeof(char)*32), msg.hostname.begin());
-    msg.free_mem = stoi(exec("cat /proc/meminfo | grep MemFree | awk '{ print $2 }'"))/1000;
-    msg.free_disk = stoi(exec("df -h | grep /dev/sda1 | awk '{ print $4 } ' | sed 's/.$//'")); // TO-DO:difference between G and M;
-    //msg.free_disk = stoi(exec("df -h | grep 'D:' | awk '{ print $4 } ' | rev | cut -c 2- | rev"));
-    msg.used_cpu = 100-stod(exec("top -b -i -n 1 | grep '%Cpu(s):' | awk -F',' '{print $4}' | grep -o  '[0-9]*\\.[0-9]'"));
+    auto hostname = exec("hostname");
+    std::copy_n(hostname.begin(), std::min(hostname.size(), sizeof(char) * 32), msg.hostname.begin());
+    msg.free_mem = stoi(exec("cat /proc/meminfo | grep MemFree | awk '{ print $2 }'")) / 1000;
+    msg.free_disk =
+        stoi(exec("df -h | grep /dev/sda1 | awk '{ print $4 } ' | sed 's/.$//'")); // TO-DO:difference G and M;
+    // msg.free_disk = stoi(exec("df -h | grep 'D:' | awk '{ print $4 } ' | rev | cut -c 2- | rev"));
+    msg.used_cpu =
+        100 - stod(exec("top -b -i -n 1 | grep '%Cpu(s):' | awk -F',' '{print $4}' | grep -o  '[0-9]*\\.[0-9]'"));
     std::cout << "Msg filled" << std::endl;
     return msg;
 }
@@ -36,7 +38,7 @@ int main(int argc, char const *argv[])
     while (1)
     {
         Config conf;
-        conf = parse_config ("../config/client.conf");
+        conf = parse_config("../config/client.conf");
         StatusMessage msg = fillMsg();
         std::cout << "Original:" << msg.uid << " " << msg.used_cpu << " " << std::endl;
         char buffer[768] = {0};
@@ -63,29 +65,26 @@ int main(int argc, char const *argv[])
         std::cout << "Sending msg" << std::endl;
         client.send((uint8_t*)&msg, sizeof(msg));
         */
-        std::string plaintext("Your great-grandfather gave this watch to your granddad for good luck. Unfortunately, Dane's luck wasn't as good as his old man's.");
-        std::vector<uint8_t> pt(plaintext.data(),plaintext.data()+plaintext.length());
+        std::string plaintext("Your great-grandfather gave this watch to your granddad for good luck. Unfortunately, "
+                              "Dane's luck wasn't as good as his old man's.");
+        std::vector<uint8_t> pt(plaintext.data(), plaintext.data() + plaintext.length());
         std::unique_ptr<Botan::RandomNumberGenerator> rng(new Botan::AutoSeeded_RNG);
 
-        //load keypair
+        // load keypair
         std::unique_ptr<Botan::Public_Key> pub(Botan::X509::load_key("../cert/ssl/nopass.cert"));
-        std::unique_ptr<Botan::Private_Key> priv(Botan::PKCS8::load_key("../cert/ssl/nopass.key",*rng.get()));
-        
-        Botan::PK_Encryptor_EME enc(*pub,*rng.get(), "EME1(SHA-256)");
-        Botan::PK_Signer signer (*priv, *rng.get(), "EMSA1(SHA-256)");
-        
+        std::unique_ptr<Botan::Private_Key> priv(Botan::PKCS8::load_key("../cert/ssl/nopass.key", *rng.get()));
 
-        //decrypt with sk
-        //Botan::PK_Decryptor_EME dec(*pub,*rng.get(), "EME1(SHA-256)");
-        //std::cout << std::endl << "enc: " << Botan::hex_encode(ct) << std::endl << "dec: "<< Botan::hex_encode(dec.decrypt(ct));
+        Botan::PK_Encryptor_EME enc(*pub, *rng.get(), "EME1(SHA-256)");
+        Botan::PK_Signer signer(*priv, *rng.get(), "EMSA1(SHA-256)");
+
         std::cout << "Max size = " << enc.maximum_input_size() << std::endl;
-        std::vector<uint8_t> ct = enc.encrypt((const unsigned char*)&msg, sizeof(msg), *rng.get());
+        std::vector<uint8_t> ct = enc.encrypt((const unsigned char *)&msg, sizeof(msg), *rng.get());
         std::cout << "Msg size = " << ct.size() << std::endl;
-        
-        //std::vector<uint8_t> signed_msg = signer.sign_message((const unsigned char*)&msg, sizeof(msg), *rng.get());
+
+        // std::vector<uint8_t> signed_msg = signer.sign_message((const unsigned char*)&msg, sizeof(msg), *rng.get());
         signer.update(ct);
         std::vector<uint8_t> signature = signer.signature(*rng.get());
-        
+
         std::cout << "Signature size = " << signature.size() << std::endl;
 
         std::cout << "Msg + Signature size = " << ct.size() + signature.size() << std::endl;
@@ -93,14 +92,13 @@ int main(int argc, char const *argv[])
         memcpy(&buffer, ct.data(), ct.size());
         memcpy(&buffer[384], signature.data(), signature.size());
 
-
-        //Send encrypted and signed msg
-        s->send((const char*)&buffer,sizeof(buffer));
+        // Send encrypted and signed msg
+        s->send((const char *)&buffer, sizeof(buffer));
 
         StatusMessage msg_d;
-        //memcpy(&msg_d, dec.decrypt(enc.encrypt((const unsigned char*)&msg, sizeof(msg), *rng.get())).data(), sizeof(msg));
-        //std::cout << "Final:" << msg_d.uid << " " << msg_d.used_cpu << " " << std::endl;
-        
+        // memcpy(&msg_d, dec.decrypt(enc.encrypt((const unsigned char*)&msg, sizeof(msg), *rng.get())).data(),
+        // sizeof(msg)); std::cout << "Final:" << msg_d.uid << " " << msg_d.used_cpu << " " << std::endl;
+
         sleep(20);
     }
 }

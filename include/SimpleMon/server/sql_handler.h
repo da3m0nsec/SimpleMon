@@ -1,5 +1,5 @@
-#include <vector>
 #include <string>
+#include <vector>
 
 #define EXAMPLE_HOST "localhost"
 #define EXAMPLE_USER "simplemond"
@@ -8,5 +8,5 @@
 
 using StatusVector = std::vector<std::pair<std::string, int>>;
 
-int ingestToSql (StatusVector msg);
+int ingestToSql(StatusVector msg);
 int sqlTest();
