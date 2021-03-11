@@ -31,7 +31,7 @@ StatusMessage fillMsg()
     return msg;
 }
 
-int main()
+int main(int argc, char const *argv[])
 {
     while (1)
     {
@@ -39,9 +39,9 @@ int main()
         conf = parse_config ("../config/client.conf");
         StatusMessage msg = fillMsg();
         std::cout << "Original:" << msg.uid << " " << msg.used_cpu << " " << std::endl;
-        char buffer[1024] = {0};
+        char buffer[768] = {0};
         std::unique_ptr<Socket_Client> s = std::make_unique<Socket_Client>(conf.ip_address, conf.port);
-       /*
+        /*
         // Create TLS connection
         Callbacks callbacks;
         callbacks.sock = s; //TODO: move this to constructor
@@ -68,28 +68,39 @@ int main()
         std::unique_ptr<Botan::RandomNumberGenerator> rng(new Botan::AutoSeeded_RNG);
 
         //load keypair
-        std::unique_ptr<Botan::Private_Key> kp(Botan::PKCS8::load_key("../cert/ssl/nopass.key",*rng.get()));
-
-        //encrypt with pk
-        Botan::PK_Encryptor_EME enc(*kp,*rng.get(), "EME1(SHA-256)");
+        std::unique_ptr<Botan::Public_Key> pub(Botan::X509::load_key("../cert/ssl/nopass.cert"));
+        std::unique_ptr<Botan::Private_Key> priv(Botan::PKCS8::load_key("../cert/ssl/nopass.key",*rng.get()));
+        
+        Botan::PK_Encryptor_EME enc(*pub,*rng.get(), "EME1(SHA-256)");
+        Botan::PK_Signer signer (*priv, *rng.get(), "EMSA1(SHA-256)");
+        
 
         //decrypt with sk
-        Botan::PK_Decryptor_EME dec(*kp,*rng.get(), "EME1(SHA-256)");
+        //Botan::PK_Decryptor_EME dec(*pub,*rng.get(), "EME1(SHA-256)");
         //std::cout << std::endl << "enc: " << Botan::hex_encode(ct) << std::endl << "dec: "<< Botan::hex_encode(dec.decrypt(ct));
         std::cout << "Max size = " << enc.maximum_input_size() << std::endl;
-        
-        //std::cout << std::endl << "enc: " << Botan::hex_encode(ct) << std::endl << "dec: "<< Botan::hex_encode(dec.decrypt(ct));
-        
-        
         std::vector<uint8_t> ct = enc.encrypt((const unsigned char*)&msg, sizeof(msg), *rng.get());
         std::cout << "Msg size = " << ct.size() << std::endl;
-        s->send((const char*)ct.data(),ct.size());
+        
+        //std::vector<uint8_t> signed_msg = signer.sign_message((const unsigned char*)&msg, sizeof(msg), *rng.get());
+        signer.update(ct);
+        std::vector<uint8_t> signature = signer.signature(*rng.get());
+        
+        std::cout << "Signature size = " << signature.size() << std::endl;
+
+        std::cout << "Msg + Signature size = " << ct.size() + signature.size() << std::endl;
+
+        memcpy(&buffer, ct.data(), ct.size());
+        memcpy(&buffer[384], signature.data(), signature.size());
+
+
+        //Send encrypted and signed msg
+        s->send((const char*)&buffer,sizeof(buffer));
 
         StatusMessage msg_d;
-        memcpy(&msg_d, dec.decrypt(enc.encrypt((const unsigned char*)&msg, sizeof(msg), *rng.get())).data(), sizeof(msg));
-        std::cout << "Final:" << msg_d.uid << " " << msg_d.used_cpu << " " << std::endl;
+        //memcpy(&msg_d, dec.decrypt(enc.encrypt((const unsigned char*)&msg, sizeof(msg), *rng.get())).data(), sizeof(msg));
+        //std::cout << "Final:" << msg_d.uid << " " << msg_d.used_cpu << " " << std::endl;
         
-        //sleep(20);
-    return 0;
+        sleep(20);
     }
 }

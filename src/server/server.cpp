@@ -24,15 +24,20 @@ int main(int argc, char const *argv[])
 								policy,
 								rng);
                                 */
+
     std::unique_ptr<Botan::RandomNumberGenerator> rng(new Botan::AutoSeeded_RNG);
 
-    std::unique_ptr<Botan::Private_Key> kp(Botan::PKCS8::load_key("../cert/ssl/nopass.key",*rng.get()));
-    Botan::PK_Decryptor_EME dec(*kp,*rng.get(), "EME1(SHA-256)");
-    
+    std::unique_ptr<Botan::Private_Key> priv(Botan::PKCS8::load_key("../cert/ssl/nopass.key",*rng.get()));
+    std::unique_ptr<Botan::Public_Key> pub(Botan::X509::load_key("../cert/ssl/nopass.cert"));
+
+    Botan::PK_Decryptor_EME dec(*priv,*rng.get(), "EME1(SHA-256)");
+    Botan::PK_Verifier verifier(*pub, "EMSA1(SHA-256)");
+
     while (1)
     {
-        s->read((char *)buffer,512);
-        memcpy(&msg, dec.decrypt((const unsigned char*)&buffer, 384).data(), sizeof(msg));
+        s->read((char *)buffer,768);
+        std::cout << std::endl << "Msg is " << (verifier.verify_message((const unsigned char*)&buffer, 384, (const unsigned char*)&buffer+384, 384)? "valid" : "invalid") << std::endl;
+        memcpy(&msg, dec.decrypt((const unsigned char*)&buffer, 384).data(), sizeof(msg)); 
 
         //server.received_data(buffer, sizeof(msg));
 
@@ -42,7 +47,6 @@ int main(int argc, char const *argv[])
         //ingestToSql(msgToSql(msg));
         std::cout << "Decrypted:" << msg.uid << " " << msg.used_cpu << " " << std::endl;
     }
-    return 0;
 }
 
 StatusVector msgToSql(StatusMessage& msg){
