@@ -13,6 +13,7 @@
 #include <botan/tls_client.h>
 #include <botan/tls_policy.h>
 #include <botan/x509path.h>
+#include <botan/data_src.h>
 
 #include <iostream>
 #include <string>

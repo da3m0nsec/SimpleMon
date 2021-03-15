@@ -10,7 +10,8 @@ int main(int argc, char const *argv[])
 
     std::unique_ptr<Botan::RandomNumberGenerator> rng(new Botan::AutoSeeded_RNG);
 
-    std::unique_ptr<Botan::Private_Key> priv(Botan::PKCS8::load_key("/etc/simplemon-server/priv.key", conf.key_password));
+    Botan::DataSource_Stream in("/etc/simplemon-server/priv.key");
+    std::unique_ptr<Botan::Private_Key> priv(Botan::PKCS8::load_key(in, conf.key_password));
     std::unique_ptr<Botan::Public_Key> pub(Botan::X509::load_key("/etc/simplemon-server/pub.key"));
 
     Botan::PK_Decryptor_EME dec(*priv, *rng.get(), "EME1(SHA-256)");
