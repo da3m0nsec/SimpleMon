@@ -38,9 +38,9 @@ execute_process (
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 #set(OPENSSL_USE_STATIC_LIBS TRUE)
-find_package(OpenSSL REQUIRED)
+#find_package(OpenSSL REQUIRED)
 
-find_package(OpenSSL REQUIRED)
+#find_package(OpenSSL REQUIRED)
 
 target_link_libraries(server 
     mysqlcppconn
