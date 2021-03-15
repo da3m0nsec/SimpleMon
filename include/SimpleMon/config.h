@@ -4,9 +4,12 @@
 
 struct Config
 {
-    std::string ip_address = "127.0.0.1";
     int port = 6540;
-    int resend_period = 3;
+    std::string logs = "none";
+
+    std::string ip_address = "127.0.0.1";
+    int resend_period = 20;
+    std::string key_password = "";
 };
 
 Config parse_config(std::string filename);

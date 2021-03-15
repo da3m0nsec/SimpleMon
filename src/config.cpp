@@ -31,6 +31,14 @@ Config parse_config(std::string filename)
             {
                 conf.resend_period = stoi(value);
             }
+            if (name == "logs")
+            {
+                conf.logs = value;
+            }
+            if (name == "key_password")
+            {
+                conf.key_password = value;
+            }
         }
     }
     else

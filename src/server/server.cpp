@@ -3,27 +3,10 @@
 int main(int argc, char const *argv[])
 {
     Config conf;
-    conf = parse_config("../config/server.conf");
+    conf = parse_config("/etc/simplemon-server/server.conf");
 
-    short buffer[1024] = {};
-    StatusMessage msg;
     std::unique_ptr<Socket_Server> s = std::make_unique<Socket_Server>(conf.port);
-    /*
-    // prepare all the parameters
-    Callbacks callbacks;
-    callbacks.sock = s;
-    Botan::AutoSeeded_RNG rng;
-    Botan::TLS::Session_Manager_In_Memory session_mgr(rng);
-    Server_Credentials creds (rng);
-    Botan::TLS::Strict_Policy policy;
-
-    // accept tls connection from client
-    Botan::TLS::Server server(  callbacks,
-                                session_mgr,
-                                creds,
-                                policy,
-                                rng);
-                                */
+    
 
     std::unique_ptr<Botan::RandomNumberGenerator> rng(new Botan::AutoSeeded_RNG);
 
@@ -35,21 +18,22 @@ int main(int argc, char const *argv[])
 
     while (1)
     {
+        short buffer[1024] = {};
+        StatusMessage msg;
         s->read((char *)buffer, 768);
-        std::cout << "Msg is "
-                  << (verifier.verify_message((const unsigned char *)&buffer, 384, (const unsigned char *)&buffer + 384,
-                                              384)
-                          ? "valid"
-                          : "invalid")
-                  << std::endl;
+        bool verified = verifier.verify_message((const unsigned char *)&buffer, 384, (const unsigned char *)&buffer + 384,
+                                                384);
+        if (conf.logs != "none") {
+            std::cout << "Msg is "
+                    << (verified
+                        ? "valid"
+                        : "invalid")
+                    << std::endl;
+        }
+        if (!verified){
+            continue;
+        }
         memcpy(&msg, dec.decrypt((const unsigned char *)&buffer, 384).data(), sizeof(msg));
-
-        // server.received_data(buffer, sizeof(msg));
-
-        // memcpy(&msg, dec.decrypt(enc.encrypt((const unsigned char*)&msg, sizeof(msg), *rng.get())).data(),
-        // sizeof(msg));
-
-        // memcpy(&msg, buffer, sizeof(msg));
         ingestToSql(msgToSql(msg));
         std::cout << "Decrypted:" << msg.uid << " " << msg.used_cpu << " " << std::endl;
     }

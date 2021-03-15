@@ -13,7 +13,7 @@ serviceText+="[Service]\n"
 serviceText+="Restart=always\n"
 serviceText+="RestartSec=3\n"
 serviceText+="User=simplemond\n"
-serviceText+="ExecStart=/usr/sbin/simplemond-client\n"
+serviceText+="ExecStart=/usr/sbin/simplemon-client\n"
 serviceText+="[Install]\n"
 serviceText+="WantedBy=multi-user.target\n"
 
@@ -32,15 +32,17 @@ then
 fi
 
 # Copy program to /usr/sbin
-sudo cp client /usr/sbin/simplemond-client   
+sudo cp client /usr/sbin/simplemon-client   
 
 # Copy config to /etc/simplemon-client
 sudo mkdir /etc/simplemon-client
 sudo cp ../config/client.conf /etc/simplemon-client
+sudo chown simplemond /etc/simplemon-client/client.conf
+sudo chmod 600 /etc/simplemon-client/client.conf
 
 # Copy service
-sudo rm /etc/systemd/system/simplemond-client.service
-echo -e $serviceText | sudo tee -a /etc/systemd/system/simplemond-client.service >/dev/null
+sudo rm /etc/systemd/system/simplemon-client.service
+echo -e $serviceText | sudo tee -a /etc/systemd/system/simplemon-client.service >/dev/null
 
-systemctl start simplemond-client
-systemctl enable simplemond-client
+systemctl start simplemon-client
+systemctl enable simplemon-client

@@ -109,30 +109,24 @@ bool Callbacks::tls_session_established(const Botan::TLS::Session &session)
 }
 
 /*
-void ssl_client (std::shared_ptr <Socket_Client> s) {
-// prepare all the parameters
-Callbacks callbacks;
-callbacks.sock = s; //TODO: move this to constructor
-Botan::AutoSeeded_RNG rng;
-Botan::TLS::Session_Manager_In_Memory session_mgr(rng);
-Client_Credentials creds;
-Botan::TLS::Strict_Policy policy;
+    // Create TLS connection
+    Callbacks callbacks;
+    callbacks.sock = s; //TODO: move this to constructor
+    Botan::AutoSeeded_RNG rng;
+    Botan::TLS::Session_Manager_In_Memory session_mgr(rng);
+    Client_Credentials creds;
+    Botan::TLS::Strict_Policy policy;
 
-// open the tls connection
-Botan::TLS::Client client(  callbacks,
-                            session_mgr,
-                            creds,
-                            policy,
-                            rng,
-                            Botan::TLS::Server_Information("botan.randombit.net", 443),
-                            Botan::TLS::Protocol_Version::TLS_V12);
+    // open the tls connection
+    Botan::TLS::Client client(  callbacks,
+                                session_mgr,
+                                creds,
+                                policy,
+                                rng,
+                                Botan::TLS::Server_Information(),
+                                Botan::TLS::Protocol_Version::TLS_V12);
 
-while(!client.is_closed())
-    {
-    // read data received from the tls server, e.g., using BSD sockets or boost asio
-    // ...
-
-    // send data to the tls server using client.send_data()
-    }
-}
+    sleep(5);
+    std::cout << "Sending msg" << std::endl;
+    client.send((uint8_t*)&msg, sizeof(msg));
 */

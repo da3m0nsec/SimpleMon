@@ -97,12 +97,12 @@ bool Callbacks::tls_session_established(const Botan::TLS::Session &session)
 }
 
 /*
-Botan::TLS::Server build_TLS_Server () { //CANT USE THIS
     // prepare all the parameters
     Callbacks callbacks;
+    callbacks.sock = s;
     Botan::AutoSeeded_RNG rng;
     Botan::TLS::Session_Manager_In_Memory session_mgr(rng);
-    Server_Credentials creds;
+    Server_Credentials creds (rng);
     Botan::TLS::Strict_Policy policy;
 
     // accept tls connection from client
@@ -111,12 +111,4 @@ Botan::TLS::Server build_TLS_Server () { //CANT USE THIS
                                 creds,
                                 policy,
                                 rng);
-    return server;
-
-    // read data received from the tls client, e.g., using BSD sockets or boost asio
-    // and pass it to server.received_data().
-    // ...
-
-    // send data to the tls client using server.send_data()
-}
 */

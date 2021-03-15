@@ -43,31 +43,7 @@ int main(int argc, char const *argv[])
         std::cout << "Original:" << msg.uid << " " << msg.used_cpu << " " << std::endl;
         char buffer[768] = {0};
         std::unique_ptr<Socket_Client> s = std::make_unique<Socket_Client>(conf.ip_address, conf.port);
-        /*
-        // Create TLS connection
-        Callbacks callbacks;
-        callbacks.sock = s; //TODO: move this to constructor
-        Botan::AutoSeeded_RNG rng;
-        Botan::TLS::Session_Manager_In_Memory session_mgr(rng);
-        Client_Credentials creds;
-        Botan::TLS::Strict_Policy policy;
-
-        // open the tls connection
-        Botan::TLS::Client client(  callbacks,
-                                    session_mgr,
-                                    creds,
-                                    policy,
-                                    rng,
-                                    Botan::TLS::Server_Information(),
-                                    Botan::TLS::Protocol_Version::TLS_V12);
-
-        sleep(5);
-        std::cout << "Sending msg" << std::endl;
-        client.send((uint8_t*)&msg, sizeof(msg));
-        */
-        std::string plaintext("Your great-grandfather gave this watch to your granddad for good luck. Unfortunately, "
-                              "Dane's luck wasn't as good as his old man's.");
-        std::vector<uint8_t> pt(plaintext.data(), plaintext.data() + plaintext.length());
+        
         std::unique_ptr<Botan::RandomNumberGenerator> rng(new Botan::AutoSeeded_RNG);
 
         // load keypair
@@ -77,8 +53,8 @@ int main(int argc, char const *argv[])
         Botan::PK_Encryptor_EME enc(*pub, *rng.get(), "EME1(SHA-256)");
         Botan::PK_Signer signer(*priv, *rng.get(), "EMSA1(SHA-256)");
 
-        std::cout << "Max size = " << enc.maximum_input_size() << std::endl;
         std::vector<uint8_t> ct = enc.encrypt((const unsigned char *)&msg, sizeof(msg), *rng.get());
+        std::cout << "Max size = " << enc.maximum_input_size() << std::endl;
         std::cout << "Msg size = " << ct.size() << std::endl;
 
         // std::vector<uint8_t> signed_msg = signer.sign_message((const unsigned char*)&msg, sizeof(msg), *rng.get());
@@ -99,6 +75,6 @@ int main(int argc, char const *argv[])
         // memcpy(&msg_d, dec.decrypt(enc.encrypt((const unsigned char*)&msg, sizeof(msg), *rng.get())).data(),
         // sizeof(msg)); std::cout << "Final:" << msg_d.uid << " " << msg_d.used_cpu << " " << std::endl;
 
-        sleep(20);
+        sleep(conf.resend_period);
     }
 }

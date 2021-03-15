@@ -13,7 +13,7 @@ serviceText+="[Service]\n"
 serviceText+="Restart=always\n"
 serviceText+="RestartSec=3\n"
 serviceText+="User=simplemond\n"
-serviceText+="ExecStart=/usr/sbin/simplemond-server\n"
+serviceText+="ExecStart=/usr/sbin/simplemon-server\n"
 serviceText+="[Install]\n"
 serviceText+="WantedBy=multi-user.target\n"
 
@@ -31,17 +31,23 @@ then
 fi
 
 # Copy program to /usr/sbin
-sudo cp server /usr/sbin/simplemond-server   
+sudo cp server /usr/sbin/simplemon-server
 
 # Copy config to /etc/simplemon-server
 sudo mkdir /etc/simplemon-server
 sudo cp ../config/server.conf /etc/simplemon-server
+sudo chown simplemond /etc/simplemon-server/server.conf
+sudo chmod 600 /etc/simplemon-server/server.conf
+
+sudo cp ../config/sql.conf /etc/simplemon-server
+sudo chown simplemond /etc/simplemon-server/sql.conf
+sudo chmod 600 /etc/simplemon-server/sql.conf
 
 # Copy service
-sudo rm /etc/systemd/system/simplemond-server.service
-echo -e $serviceText | sudo tee -a /etc/systemd/system/simplemond-server.service >/dev/null
+sudo rm /etc/systemd/system/simplemon-server.service
+echo -e $serviceText | sudo tee -a /etc/systemd/system/simplemon-server.service >/dev/null
 
-systemctl start simplemond-server
-systemctl enable simplemond-server
+systemctl start simplemon-server
+systemctl enable simplemon-server
 
 #prepare sql
