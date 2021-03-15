@@ -10,8 +10,8 @@ int main(int argc, char const *argv[])
 
     std::unique_ptr<Botan::RandomNumberGenerator> rng(new Botan::AutoSeeded_RNG);
 
-    std::unique_ptr<Botan::Private_Key> priv(Botan::PKCS8::load_key("../cert/ssl/nopass.key", *rng.get()));
-    std::unique_ptr<Botan::Public_Key> pub(Botan::X509::load_key("../cert/ssl/nopass.cert"));
+    std::unique_ptr<Botan::Private_Key> priv(Botan::PKCS8::load_key("/etc/simplemon-server/priv.key", conf.key_password));
+    std::unique_ptr<Botan::Public_Key> pub(Botan::X509::load_key("/etc/simplemon-server/pub.key"));
 
     Botan::PK_Decryptor_EME dec(*priv, *rng.get(), "EME1(SHA-256)");
     Botan::PK_Verifier verifier(*pub, "EMSA1(SHA-256)");
@@ -35,7 +35,6 @@ int main(int argc, char const *argv[])
         }
         memcpy(&msg, dec.decrypt((const unsigned char *)&buffer, 384).data(), sizeof(msg));
         ingestToSql(msgToSql(msg));
-        std::cout << "Decrypted:" << msg.uid << " " << msg.used_cpu << " " << std::endl;
     }
 }
 
