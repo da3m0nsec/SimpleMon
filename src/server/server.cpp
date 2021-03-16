@@ -3,16 +3,16 @@
 int main(int argc, char const *argv[])
 {
     Config conf;
-    conf = parse_config("/etc/simplemon-server/server.conf");
+    conf = parse_config("/etc/simplemon-server/config/server.conf");
 
     std::unique_ptr<Socket_Server> s = std::make_unique<Socket_Server>(conf.port);
     
 
     std::unique_ptr<Botan::RandomNumberGenerator> rng(new Botan::AutoSeeded_RNG);
 
-    Botan::DataSource_Stream in("/etc/simplemon-server/priv.key");
+    Botan::DataSource_Stream in("/etc/simplemon-server/keys/server.priv");
     std::unique_ptr<Botan::Private_Key> priv(Botan::PKCS8::load_key(in, conf.key_password));
-    std::unique_ptr<Botan::Public_Key> pub(Botan::X509::load_key("/etc/simplemon-server/pub.key"));
+    std::unique_ptr<Botan::Public_Key> pub(Botan::X509::load_key("/etc/simplemon-server/keys/client.pub"));
 
     Botan::PK_Decryptor_EME dec(*priv, *rng.get(), "EME1(SHA-256)");
     Botan::PK_Verifier verifier(*pub, "EMSA1(SHA-256)");

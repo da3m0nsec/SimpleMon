@@ -29,7 +29,6 @@ StatusMessage fillMsg()
     // msg.free_disk = stoi(exec("df -h | grep 'D:' | awk '{ print $4 } ' | rev | cut -c 2- | rev"));
     msg.used_cpu =
         100 - stod(exec("top -b -i -n 1 | grep '%Cpu(s):' | awk -F',' '{print $4}' | grep -o  '[0-9]*\\.[0-9]'"));
-    std::cout << "Msg filled" << std::endl;
     return msg;
 }
 
@@ -38,17 +37,17 @@ int main(int argc, char const *argv[])
     while (1)
     {
         Config conf;
-        conf = parse_config("/etc/simplemon-client/client.conf");
+        conf = parse_config("/etc/simplemon-client/config/client.conf");
         StatusMessage msg = fillMsg();
-        std::cout << "Original:" << msg.uid << " " << msg.used_cpu << " " << std::endl;
         char buffer[768] = {0};
         std::unique_ptr<Socket_Client> s = std::make_unique<Socket_Client>(conf.ip_address, conf.port);
         
         std::unique_ptr<Botan::RandomNumberGenerator> rng(new Botan::AutoSeeded_RNG);
 
         // load keypair
-        std::unique_ptr<Botan::Public_Key> pub(Botan::X509::load_key("/etc/simplemon-client/pub.key"));
-        std::unique_ptr<Botan::Private_Key> priv(Botan::PKCS8::load_key("/etc/simplemon-client/pub.key", *rng.get()));
+        Botan::DataSource_Stream in("/etc/simplemon-client/keys/client.priv");
+        std::unique_ptr<Botan::Private_Key> priv(Botan::PKCS8::load_key(in, conf.key_password));
+        std::unique_ptr<Botan::Public_Key> pub(Botan::X509::load_key("/etc/simplemon-client/keys/server.pub"));
 
         Botan::PK_Encryptor_EME enc(*pub, *rng.get(), "EME1(SHA-256)");
         Botan::PK_Signer signer(*priv, *rng.get(), "EMSA1(SHA-256)");

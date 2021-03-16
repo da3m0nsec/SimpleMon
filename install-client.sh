@@ -36,9 +36,11 @@ sudo cp client /usr/sbin/simplemon-client
 
 # Copy config to /etc/simplemon-client
 sudo mkdir /etc/simplemon-client
-sudo cp ../config/client.conf /etc/simplemon-client
-sudo chown simplemond /etc/simplemon-client/client.conf
-sudo chmod 600 /etc/simplemon-client/client.conf
+sudo mkdir /etc/simplemon-client/config
+sudo mkdir /etc/simplemon-client/keys
+sudo cp ../config/client.conf /etc/simplemon-client/config/
+sudo chown simplemond /etc/simplemon-client/config/client.conf
+sudo chmod 600 /etc/simplemon-client/config/client.conf
 
 # Copy service
 sudo rm /etc/systemd/system/simplemon-client.service

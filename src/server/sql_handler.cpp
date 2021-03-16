@@ -17,7 +17,7 @@ void ingestToSql(StatusVector msg)
 {
     try
     {
-        SQL_Config conf = parse_sql_config("/etc/simplemon-server/sql.conf");
+        SQL_Config conf = parse_sql_config("/etc/simplemon-server/config/sql.conf");
 
         sql::Driver *driver;
         sql::Connection *con;
@@ -96,7 +96,7 @@ SQL_Config parse_sql_config(std::string filename)
     }
     else
     {
-        std::cerr << "Couldn't open config file for reading.\n";
+        std::cerr << "Couldn't open " + filename + " for reading.\n";
     }
     return conf;
 }

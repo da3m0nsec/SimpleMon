@@ -35,13 +35,15 @@ sudo cp server /usr/sbin/simplemon-server
 
 # Copy config to /etc/simplemon-server
 sudo mkdir /etc/simplemon-server
-sudo cp ../config/server.conf /etc/simplemon-server
-sudo chown simplemond /etc/simplemon-server/server.conf
-sudo chmod 600 /etc/simplemon-server/server.conf
+sudo mkdir /etc/simplemon-server/config
+sudo mkdir /etc/simplemon-server/keys
+sudo cp ../config/server.conf /etc/simplemon-server/config/
+sudo chown simplemond /etc/simplemon-server/config/server.conf
+sudo chmod 600 /etc/simplemon-server/config/server.conf
 
-sudo cp ../config/sql.conf /etc/simplemon-server
-sudo chown simplemond /etc/simplemon-server/sql.conf
-sudo chmod 600 /etc/simplemon-server/sql.conf
+sudo cp ../config/sql.conf /etc/simplemon-server/config/
+sudo chown simplemond /etc/simplemon-server/config/sql.conf
+sudo chmod 600 /etc/simplemon-server/config/sql.conf
 
 # Copy service
 sudo rm /etc/systemd/system/simplemon-server.service
@@ -51,3 +53,7 @@ systemctl start simplemon-server
 systemctl enable simplemon-server
 
 #prepare sql
+
+#prepare keys
+#botan keygen --algo=RSA --params= --passphrase= --pbe= --pbe-millis=300 --provider= --der-out
+#botan pkcs8 --pass-in= --pub-out --der-out --pass-out= --pbe= --pbe-millis=300 priv.key

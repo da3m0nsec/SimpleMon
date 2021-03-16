@@ -43,7 +43,6 @@ void Socket_Server::read(char *buf, size_t length)
     {
         throw std::system_error(EAGAIN, std::generic_category(), strerror(errno));
     }
-
-    std::cout << "Receiving" << std::endl;
+    
     ::read(sock, buf, length);
 }

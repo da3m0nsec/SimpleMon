@@ -43,7 +43,7 @@ Config parse_config(std::string filename)
     }
     else
     {
-        std::cerr << "Couldn't open config file for reading.\n";
+        std::cerr << "Couldn't open " + filename + " for reading.\n";
     }
     return conf;
 }
