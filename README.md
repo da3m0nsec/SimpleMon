@@ -28,7 +28,7 @@ sudo apt install libbotan-2-13
 
 Using Server:
 ```
-sudo apt install libbotan-2-13
+sudo apt install libbotan-2-13 mysql-client mysql-server
 ```
 
 
