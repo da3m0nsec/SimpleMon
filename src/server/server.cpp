@@ -44,8 +44,8 @@ StatusVector msgToSql(StatusMessage &msg)
     StatusVector ret;
 
     ret.reserve(5);
-
-    ret.emplace_back(msg.hostname.data(), 0);
+    std::string hostname (msg.hostname.data(), 32);
+    ret.emplace_back(hostname, 0);
     ret.emplace_back("uid", msg.uid);
     ret.emplace_back("free_mem", msg.free_mem);
     ret.emplace_back("free_disk", msg.free_disk);

@@ -53,6 +53,8 @@ systemctl start simplemon-server
 systemctl enable simplemon-server
 
 #prepare sql
+#create user 'simplemond'@'localhost' identified by 'xxxx';
+#grant all privileges on SimpleMon.* to 'simplemond'@'localhost';
 
 #prepare keys
 #botan keygen --algo=RSA --params= --passphrase= --pbe= --pbe-millis=300 --provider= --der-out

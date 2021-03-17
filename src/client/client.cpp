@@ -22,7 +22,9 @@ StatusMessage fillMsg()
     StatusMessage msg;
     msg.uid = stoi(exec("id | awk '{ print $1 }' | cut -c 5-8"));
     auto hostname = exec("hostname");
-    std::copy_n(hostname.begin(), std::min(hostname.size(), sizeof(char) * 32), msg.hostname.begin());
+    //std::copy_n(hostname.begin(), std::min(hostname.size(), sizeof(char) * 31), msg.hostname.begin());
+    strncpy(msg.hostname.begin(), hostname.data(), 32);
+    hostname[31]='\0';
     msg.free_mem = stoi(exec("cat /proc/meminfo | grep MemFree | awk '{ print $2 }'")) / 1000;
     msg.free_disk =
         stoi(exec("df -h | grep /dev/sda1 | awk '{ print $4 } ' | sed 's/.$//'")); // TO-DO:difference G and M;
