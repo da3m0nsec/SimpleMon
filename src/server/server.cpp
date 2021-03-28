@@ -35,7 +35,9 @@ int main(int argc, char const *argv[])
             continue;
         }
         memcpy(&msg, dec.decrypt((const unsigned char *)&buffer, 384).data(), sizeof(msg));
-        ingestToSql(msgToSql(msg));
+        if (conf.sql != "none") {
+            ingestToSql(msgToSql(msg));
+        }
     }
 }
 

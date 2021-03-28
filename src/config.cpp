@@ -35,6 +35,10 @@ Config parse_config(std::string filename)
             {
                 conf.logs = value;
             }
+            if (name == "sql")
+            {
+                conf.sql = value;
+            }
             if (name == "key_password")
             {
                 conf.key_password = value;

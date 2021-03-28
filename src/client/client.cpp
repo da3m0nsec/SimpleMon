@@ -18,7 +18,6 @@ std::string exec(const char *cmd)
 
 StatusMessage fillMsg()
 {
-    std::cout << "Filling msg" << std::endl;
     StatusMessage msg;
     msg.uid = stoi(exec("id | awk '{ print $1 }' | cut -c 5-8"));
     auto hostname = exec("hostname");
@@ -56,12 +55,12 @@ int main(int argc, char const *argv[])
 
         std::vector<uint8_t> ct = enc.encrypt((const unsigned char *)&msg, sizeof(msg), *rng.get());
         
-
+        std::cout << "Sending encrypted data: " << Botan::hex_encode(ct) << std::endl;
         signer.update(ct);
         std::vector<uint8_t> signature = signer.signature(*rng.get());
         if (conf.logs != "none") {
-            std::cout << "Max enc size = " << enc.maximum_input_size() << std::endl;
-            std::cout << "Msg size = " << ct.size() << std::endl;
+            //std::cout << "Max enc size = " << enc.maximum_input_size() << std::endl;
+            std::cout << "Encrypted msg size = " << ct.size() << std::endl;
             std::cout << "Signature size = " << signature.size() << std::endl;
             std::cout << "Msg + Signature size = " << ct.size() + signature.size() << std::endl;
         }
