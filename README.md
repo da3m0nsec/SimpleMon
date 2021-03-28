@@ -18,7 +18,7 @@ SimpleMon allows you to monitor multiple systems in an easy way, while being cus
 
 Compiling:
 ```
-sudo apt install cmake g++ libgcc-7-dev libmysqlcppconn-dev libbotan-2-dev
+sudo apt install cmake g++ libgcc-7-dev libmysqlcppconn-dev libbotan-2-dev libssl-dev
 ```
 
 Using Client:
