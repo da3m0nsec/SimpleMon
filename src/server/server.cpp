@@ -7,7 +7,6 @@ int main(int argc, char const *argv[])
 
     std::unique_ptr<Socket_Server> s = std::make_unique<Socket_Server>(conf.port);
     
-
     std::unique_ptr<Botan::RandomNumberGenerator> rng(new Botan::AutoSeeded_RNG);
 
     Botan::DataSource_Stream in("/etc/simplemon-server/keys/server.priv");
@@ -16,6 +15,10 @@ int main(int argc, char const *argv[])
 
     Botan::PK_Decryptor_EME dec(*priv, *rng.get(), "EME1(SHA-256)");
     Botan::PK_Verifier verifier(*pub, "EMSA1(SHA-256)");
+
+    AlertManager alertMng (1);
+
+    std::thread CheckingLoop();
 
     while (1)
     {
@@ -34,6 +37,9 @@ int main(int argc, char const *argv[])
         if (!verified){
             continue;
         }
+
+        alertMng.HostReport(std::string(msg.hostname.data()));
+
         memcpy(&msg, dec.decrypt((const unsigned char *)&buffer, 384).data(), sizeof(msg));
         if (conf.sql != "none") {
             ingestToSql(msgToSql(msg));

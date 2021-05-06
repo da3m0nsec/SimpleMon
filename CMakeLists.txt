@@ -6,16 +6,24 @@ cmake_minimum_required(VERSION 3.5)
 # Set the project name
 project (SimpleMon)
 include(FindBotan.cmake)
-#set (CMAKE_CXX_STANDARD 20)
-#set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# glib (notify)
+FIND_PACKAGE(PkgConfig REQUIRED)
+
+PKG_CHECK_MODULES(GLIB REQUIRED glib-2.0)
+PKG_CHECK_MODULES(LIBNOTIFY QUIET libnotify)
+#####
+
 add_compile_options(-std=c++17)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSTATIC_CONCPP -lssl -lcrypto")
+
 # Create a sources variable with a link to all cpp files to compile
 set(SERVER_SOURCES
     src/server/server.cpp
     src/server/sql_handler.cpp
     src/server/socket_server.cpp
     src/server/ssl_server.cpp
+    src/server/alerts.cpp
     src/config.cpp
 )
 set(CLIENT_SOURCES
@@ -28,7 +36,6 @@ set(CLIENT_SOURCES
 # Add an executable with the above sources
 add_executable(server ${SERVER_SOURCES})
 add_executable(client ${CLIENT_SOURCES})
-
 
 execute_process (
     COMMAND bash -c "mysql_config --libs"
@@ -43,9 +50,12 @@ find_package(Threads REQUIRED)
 #find_package(OpenSSL REQUIRED)
 
 target_link_libraries(server 
+    Threads::Threads
     mysqlcppconn
     mysqlcppconn-static
     ${BOTAN2_LIBRARIES}
+    ${GLIB_LIBRARY_DIRS}
+    ${NOTIFY_LIBRARIES}
 )
 
 target_link_libraries(client 
@@ -60,6 +70,10 @@ target_include_directories(server
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/include/server
         ${BOTAN2_INCLUDE_DIRS}
+        ${GLIB_INCLUDE_DIRS}
+        #glib (notify)
+        /usr/include/gdk-pixbuf-2.0 
+        ${NOTIFY_INCLUDE_DIRS}
 )
 target_include_directories(client
     PRIVATE 

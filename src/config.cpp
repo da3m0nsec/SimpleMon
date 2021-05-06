@@ -39,6 +39,11 @@ Config parse_config(std::string filename)
             {
                 conf.sql = value;
             }
+            if (name == "monitor")
+            {
+                conf.monitor = value;
+            }
+
             if (name == "key_password")
             {
                 conf.key_password = value;

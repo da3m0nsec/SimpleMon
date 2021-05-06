@@ -5,6 +5,7 @@
 #include <SimpleMon/server/socket_server.h>
 #include <SimpleMon/server/sql_handler.h>
 #include <SimpleMon/server/ssl_server.h>
+#include <SimpleMon/server/alerts.h>
 
 #include <botan/auto_rng.h>
 #include <botan/certstor_system.h>
@@ -19,6 +20,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <thread>
 
 #include <stdio.h>
 #include <stdlib.h>
