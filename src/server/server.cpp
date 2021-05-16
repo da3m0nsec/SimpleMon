@@ -18,7 +18,7 @@ int main(int argc, char const *argv[])
 
     AlertManager alertMng (1);
 
-    std::thread CheckingLoop();
+    std::thread (&AlertManager::CheckingLoop, &alertMng).detach();
 
     while (1)
     {
@@ -38,9 +38,10 @@ int main(int argc, char const *argv[])
             continue;
         }
 
-        alertMng.HostReport(std::string(msg.hostname.data()));
-
         memcpy(&msg, dec.decrypt((const unsigned char *)&buffer, 384).data(), sizeof(msg));
+        
+        alertMng.HostReport(std::string(msg.hostname.data()));
+        
         if (conf.sql != "none") {
             ingestToSql(msgToSql(msg));
         }

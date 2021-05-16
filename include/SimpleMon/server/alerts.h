@@ -10,7 +10,7 @@
 
 
 using Report = std::pair<std::string, std::chrono::steady_clock::time_point>;
-using Minutes = std::chrono::duration<int,std::deci>;
+using Minutes = std::chrono::minutes;
 
 class AlertManager{
     Minutes allowedDownTime; 
