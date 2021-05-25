@@ -20,6 +20,8 @@ SimpleMon allows you to monitor multiple systems in an easy way, while being cus
     Example of use with Grafana
     <br/>
 </p>
+
+
 ## Dependencies
 
 Compiling:
