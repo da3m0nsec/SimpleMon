@@ -8,10 +8,10 @@ project (SimpleMon)
 include(FindBotan.cmake)
 
 # glib (notify)
-FIND_PACKAGE(PkgConfig REQUIRED)
+#FIND_PACKAGE(PkgConfig REQUIRED)
 
-PKG_CHECK_MODULES(GLIB REQUIRED glib-2.0)
-PKG_CHECK_MODULES(LIBNOTIFY QUIET libnotify)
+#PKG_CHECK_MODULES(GLIB REQUIRED glib-2.0)
+#PKG_CHECK_MODULES(LIBNOTIFY QUIET libnotify)
 #####
 
 add_compile_options(-std=c++17)
@@ -54,8 +54,8 @@ target_link_libraries(server
     mysqlcppconn
     mysqlcppconn-static
     ${BOTAN2_LIBRARIES}
-    ${GLIB_LIBRARY_DIRS}
-    ${NOTIFY_LIBRARIES}
+    #${GLIB_LIBRARY_DIRS}
+    #${NOTIFY_LIBRARIES}
 )
 
 target_link_libraries(client 
@@ -72,8 +72,8 @@ target_include_directories(server
         ${BOTAN2_INCLUDE_DIRS}
         ${GLIB_INCLUDE_DIRS}
         #glib (notify)
-        /usr/include/gdk-pixbuf-2.0 
-        ${NOTIFY_INCLUDE_DIRS}
+        #/usr/include/gdk-pixbuf-2.0 
+        #${NOTIFY_INCLUDE_DIRS}
 )
 target_include_directories(client
     PRIVATE 
