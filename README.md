@@ -14,6 +14,12 @@
 
 SimpleMon allows you to monitor multiple systems in an easy way, while being customizable, hackable and secure.
 
+<p align="center">
+    <img src="misc/ejemplo_grafana.png" alt="Grafana example" height="120">
+    <br/>
+    Example of use with Grafana
+    <br/>
+</p>
 ## Dependencies
 
 Compiling:
