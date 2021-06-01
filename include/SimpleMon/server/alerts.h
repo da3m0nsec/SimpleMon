@@ -1,8 +1,10 @@
 #pragma once
 
 #include <chrono>
-#include <glib.h>
-#include <libnotify/notify.h>
+#include <string>
+//#include <libnotify/notify.h>
+//#include <glib.h>
+#include <mutex>
 #include <list>
 #include <mutex>
 #include <string>
