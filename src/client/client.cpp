@@ -19,17 +19,28 @@ std::string exec(const char *cmd)
 StatusMessage fillMsg()
 {
     StatusMessage msg;
-    msg.uid = stoi(exec("id | awk '{ print $1 }' | cut -c 5-8"));
-    auto hostname = exec("hostname");
-    //std::copy_n(hostname.begin(), std::min(hostname.size(), sizeof(char) * 31), msg.hostname.begin());
-    strncpy(msg.hostname.begin(), hostname.data(), 32);
-    hostname[31]='\0';
-    msg.free_mem = stoi(exec("cat /proc/meminfo | grep MemFree | awk '{ print $2 }'")) / 1000;
-    msg.free_disk =
-        stoi(exec("df -h | grep /dev/sda1 | awk '{ print $4 } ' | sed 's/.$//'")); // TO-DO:difference G and M;
-    // msg.free_disk = stoi(exec("df -h | grep 'D:' | awk '{ print $4 } ' | rev | cut -c 2- | rev"));
-    msg.used_cpu =
-        100 - stod(exec("top -b -i -n 1 | grep '%Cpu(s):' | awk -F',' '{print $4}' | grep -o  '[0-9]*\\.[0-9]'"));
+    try
+    {
+        msg.uid = stoi(exec("id | awk '{ print $1 }' | cut -c 5-8"));
+        auto hostname = exec("hostname");
+        // std::copy_n(hostname.begin(), std::min(hostname.size(), sizeof(char) *
+        // 31), msg.hostname.begin());
+        strncpy(msg.hostname.begin(), hostname.data(), 32);
+        hostname[31] = '\0';
+        msg.free_mem = stoi(exec("cat /proc/meminfo | grep MemFree | awk '{ print $2 }'")) / 1000;
+        msg.free_disk = stoi(exec("df -h | grep /dev/sda1 | awk '{ print $4 } ' | "
+                                  "sed 's/.$//'")); // TO-DO:difference
+                                                    // G
+                                                    // and
+                                                    // M;
+        // msg.free_disk = stoi(exec("df -h | grep 'D:' | awk '{ print $4 } ' | rev
+        // | cut -c 2- | rev"));
+        msg.used_cpu = 100 - stod(exec("top -b -i -n 1 | grep '%Cpu(s):' | awk "
+                                       "-F',' '{print $4}' | awk '{print $1}'"));
+    }
+    catch (const std::invalid_argument &ex)
+    {
+    }
     return msg;
 }
 
@@ -42,7 +53,7 @@ int main(int argc, char const *argv[])
         StatusMessage msg = fillMsg();
         char buffer[768] = {0};
         std::unique_ptr<Socket_Client> s = std::make_unique<Socket_Client>(conf.ip_address, conf.port);
-        
+
         std::unique_ptr<Botan::RandomNumberGenerator> rng(new Botan::AutoSeeded_RNG);
 
         // load keypair
@@ -54,12 +65,14 @@ int main(int argc, char const *argv[])
         Botan::PK_Signer signer(*priv, *rng.get(), "EMSA1(SHA-256)");
 
         std::vector<uint8_t> ct = enc.encrypt((const unsigned char *)&msg, sizeof(msg), *rng.get());
-        
+
         std::cout << "Sending encrypted data: " << Botan::hex_encode(ct) << std::endl;
         signer.update(ct);
         std::vector<uint8_t> signature = signer.signature(*rng.get());
-        if (conf.logs != "none") {
-            //std::cout << "Max enc size = " << enc.maximum_input_size() << std::endl;
+        if (conf.logs != "none")
+        {
+            // std::cout << "Max enc size = " << enc.maximum_input_size() <<
+            // std::endl;
             std::cout << "Encrypted msg size = " << ct.size() << std::endl;
             std::cout << "Signature size = " << signature.size() << std::endl;
             std::cout << "Msg + Signature size = " << ct.size() + signature.size() << std::endl;

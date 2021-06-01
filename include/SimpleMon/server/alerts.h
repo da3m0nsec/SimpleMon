@@ -1,28 +1,25 @@
 #pragma once
 
 #include <chrono>
-#include <string>
-#include <libnotify/notify.h>
 #include <glib.h>
-#include <mutex>
+#include <libnotify/notify.h>
 #include <list>
-
-
+#include <mutex>
+#include <string>
 
 using Report = std::pair<std::string, std::chrono::steady_clock::time_point>;
 using Minutes = std::chrono::minutes;
 
-class AlertManager{
-    Minutes allowedDownTime; 
+class AlertManager
+{
+    Minutes allowedDownTime;
     std::list<Report> reports;
     std::mutex reportsMutex;
 
-public:
+  public:
     AlertManager(int downTime);
 
-    
-
-    void HostReport (const std::string& host);
-    void SystemNotify (const std::string& host);
-    void CheckingLoop ();
+    void HostReport(const std::string &host);
+    void SystemNotify(const std::string &host);
+    void CheckingLoop();
 };

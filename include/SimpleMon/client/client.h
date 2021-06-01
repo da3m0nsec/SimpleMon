@@ -12,15 +12,13 @@
 #include <stdexcept>
 #include <string>
 
-
 #include <botan/auto_rng.h>
+#include <botan/data_src.h>
 #include <botan/hex.h>
 #include <botan/pk_keys.h>
 #include <botan/pkcs8.h>
 #include <botan/pubkey.h>
 #include <botan/rng.h>
-#include <botan/data_src.h>
-
 
 std::string exec(const char *cmd);
 StatusMessage fillMsg();

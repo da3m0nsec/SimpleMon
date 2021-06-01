@@ -1,9 +1,8 @@
-#include <string>
-#include <vector>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
-
+#include <string>
+#include <vector>
 
 using StatusVector = std::vector<std::pair<std::string, int>>;
 
