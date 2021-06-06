@@ -21,30 +21,27 @@ Config parse_config(std::string filename)
             {
                 conf.ip_address = value;
             }
-
             else if (name == "port")
             {
                 conf.port = stoi(value);
             }
-
             else if (name == "resend_period")
             {
                 conf.resend_period = stoi(value);
             }
-            if (name == "logs")
+            else if (name == "logs")
             {
                 conf.logs = value;
             }
-            if (name == "sql")
+            else if (name == "sql")
             {
                 conf.sql = value;
             }
-            if (name == "monitor")
+            else if (name == "monitor")
             {
                 conf.monitor = value;
             }
-
-            if (name == "key_password")
+            else if (name == "key_password")
             {
                 conf.key_password = value;
             }
