@@ -39,5 +39,21 @@ Using Server:
 sudo apt install libbotan-2-13 mysql-client mysql-server
 ```
 
+## Install
+
+Server:
+```
+git clone https://github.com/da3m0nsec/SimpleMon
+cd SimpleMon
+./install-server.sh
+```
+
+Client:
+```
+git clone https://github.com/da3m0nsec/SimpleMon
+cd SimpleMon
+./install-client.sh
+```
+
 
 ## Warning: Currently under development !
