@@ -4,6 +4,8 @@
 #include <iostream>
 #include <thread>
 
+#include <stdlib.h>
+
 AlertManager::AlertManager(int downTime) : allowedDownTime(1)
 {
 }
@@ -29,12 +31,23 @@ void AlertManager::HostReport(const std::string &host)
     it->second = std::chrono::steady_clock::now();
 }
 
-void AlertManager::SystemNotify(const std::string &host)
-{
+void AlertManager::SystemNotify(std::string host)
+{   
 
-    std::string notificationHeader = std::string("Alert: ") + host + " is down";
+    host.pop_back();
+    std::string notificationHeader = std::string("Simplemon alert: ") + host + " is down";
     std::string notificationBody =
-        "Simplemon: host hasn't reported for " + std::to_string(allowedDownTime.count()) + " minutes.";
+        "Host hasn't reported for " + std::to_string(allowedDownTime.count()) + " minutes.";
+
+    std::string quo ("\"");
+    std::string sys ("notify-all ");
+    std::string space (" ");
+
+    std::string command = (sys + quo + notificationHeader + quo + space + quo + notificationBody + quo);
+
+    std::cout << command << std::endl;
+    
+    system(command.c_str());
 }
 
 void AlertManager::CheckingLoop()

@@ -22,6 +22,6 @@ class AlertManager
     AlertManager(int downTime);
 
     void HostReport(const std::string &host);
-    void SystemNotify(const std::string &host);
+    void SystemNotify(std::string host);
     void CheckingLoop();
 };

@@ -24,11 +24,6 @@ void ingestToSql(StatusVector msg)
         sql::Statement *stmt;
         sql::PreparedStatement *pstmt;
 
-        for (auto element : msg)
-        {
-            // std::cout << element.first << " = " << element.second << std::endl;
-        }
-
         /* Create a connection */
         driver = get_driver_instance();
         con = driver->connect("tcp://127.0.0.1:3306", "simplemond", conf.password);
